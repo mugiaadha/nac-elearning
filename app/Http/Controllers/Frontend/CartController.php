@@ -375,7 +375,7 @@ class CartController extends Controller
             $total_amount = round(Cart::total());
         }
 
-        \Stripe\Stripe::setApiKey('');
+        \Stripe\Stripe::setApiKey('a');
 
         $token = $_POST['stripeToken'];
 
