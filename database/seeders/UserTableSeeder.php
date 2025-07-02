@@ -166,13 +166,13 @@ class UserTableSeeder extends Seeder
 
         DB::table('smtp_settings')->insert([
             [
-                'mailer' => 'mailer',
-                'host' => 'host',
-                'port' => 'port',
-                'username' => 'username',
-                'password' => 'password',
-                'encryption' => 'encryption',
-                'from_address' => 'from_address',
+                'mailer' => 'smtp',
+                'host' => 'smtp.googlemail.com',
+                'port' => '465 ',
+                'username' => 'mugiaadha@gmail.com',
+                'password' => 'ixbiuxluonxlvsaq',
+                'encryption' => 'tls',
+                'from_address' => 'nac@gmail.com',
             ],
         ]);
     }

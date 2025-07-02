@@ -59,6 +59,7 @@
             </ul>
         </li>
 
+        @if(0)
         <li>
             <a class="has-arrow" href="javascript:;">
                 <div class="parent-icon"><i class='bx bx-purchase-tag'></i></div>
@@ -68,6 +69,7 @@
                 <li><a href="{{ route('admin.all.coupon') }}"><i class='bx bx-gift'></i>All Coupon</a></li>
             </ul>
         </li>
+        @endif
 
         <li>
             <a class="has-arrow" href="javascript:;">
@@ -91,6 +93,7 @@
             </ul>
         </li>
 
+        @if(0)
         <li>
             <a class="has-arrow" href="javascript:;">
                 <div class="parent-icon"><i class='bx bx-bar-chart-square'></i></div>
@@ -111,6 +114,7 @@
                 <li><a href="{{ route('admin.active.review') }}"><i class='bx bx-check'></i>Active Review</a></li>
             </ul>
         </li>
+        @endif
 
         <li>
             <a class="has-arrow" href="javascript:;">

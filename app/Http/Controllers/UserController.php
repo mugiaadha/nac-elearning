@@ -3,24 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
-{ 
-    public function Index(){
+{
+    public function Index()
+    {
         return view('frontend.index');
     } // End Method 
 
-    public function UserProfile(){
+    public function UserProfile()
+    {
 
         $id = Auth::user()->id;
         $profileData = User::find($id);
-        return view('frontend.dashboard.edit_profile',compact('profileData')); 
+        return view('frontend.dashboard.edit_profile', compact('profileData'));
     } // End Method 
 
-    public function UserProfileUpdate(Request $request){
+    public function UserProfileUpdate(Request $request)
+    {
 
         $id = Auth::user()->id;
         $data = User::find($id);
@@ -31,11 +34,11 @@ class UserController extends Controller
         $data->address = $request->address;
 
         if ($request->file('photo')) {
-           $file = $request->file('photo');
-           @unlink(public_path('upload/user_images/'.$data->photo));
-           $filename = date('YmdHi').$file->getClientOriginalName();
-           $file->move(public_path('upload/user_images'),$filename);
-           $data['photo'] = $filename; 
+            $file = $request->file('photo');
+            @unlink(public_path('upload/user_images/' . $data->photo));
+            $filename = date('YmdHi') . $file->getClientOriginalName();
+            $file->move(public_path('upload/user_images'), $filename);
+            $data['photo'] = $filename;
         }
 
         $data->save();
@@ -45,10 +48,10 @@ class UserController extends Controller
             'alert-type' => 'success'
         );
         return redirect()->back()->with($notification);
+    } // End Method 
 
-    }// End Method 
-
-    public function UserLogout(Request $request) {
+    public function UserLogout(Request $request)
+    {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
@@ -64,12 +67,14 @@ class UserController extends Controller
     } // End Method 
 
 
-    public function UserChangePassword(){
+    public function UserChangePassword()
+    {
         return view('frontend.dashboard.change_password');
-    }// End Method 
+    } // End Method 
 
 
-    public function UserPasswordUpdate(Request $request){
+    public function UserPasswordUpdate(Request $request)
+    {
 
         /// Validation 
         $request->validate([
@@ -78,7 +83,7 @@ class UserController extends Controller
         ]);
 
         if (!Hash::check($request->old_password, auth::user()->password)) {
-            
+
             $notification = array(
                 'message' => 'Old Password Does not Match!',
                 'alert-type' => 'error'
@@ -95,16 +100,12 @@ class UserController extends Controller
             'message' => 'Password Change Successfully',
             'alert-type' => 'success'
         );
-        return back()->with($notification); 
+        return back()->with($notification);
+    } // End Method
 
-    }// End Method
 
-
-    public function LiveChat(){ 
-        return view('frontend.dashboard.live_chat'); 
+    public function LiveChat()
+    {
+        return view('frontend.dashboard.live_chat');
     } // End Method 
-
-
-
 }
- 

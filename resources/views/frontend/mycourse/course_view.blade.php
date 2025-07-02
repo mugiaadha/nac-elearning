@@ -6,7 +6,6 @@ $setting = App\Models\SiteSetting::find(1);
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
 <body>
-
     <!-- start cssload-loader -->
     <div class="preloader">
         <div class="loader">
@@ -72,16 +71,13 @@ $setting = App\Models\SiteSetting::find(1);
                         </div>
                         <div class="nav-right-button d-flex align-items-center">
                             <a href="#" class="btn theme-btn theme-btn-sm theme-btn-transparent lh-26 text-white mr-2" data-toggle="modal" data-target="#ratingModal"><i class="la la-star mr-1"></i> leave a rating</a>
-                            <a href="#" class="btn theme-btn theme-btn-sm theme-btn-transparent lh-26 text-white mr-2" data-toggle="modal" data-target="#shareModal"><i class="la la-share mr-1"></i> share</a>
                             <div class="generic-action-wrap generic--action-wrap">
                                 <div class="dropdown">
                                     <a class="action-btn" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="la la-ellipsis-v"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="#">Favorite this course</a>
-                                        <a class="dropdown-item" href="#">Archive this course</a>
-                                        <a class="dropdown-item" href="#">Gift this course</a>
+                                        <a class="dropdown-item" href="{{ route('dashboard') }}">Back To Home</a>
                                     </div>
                                 </div>
                             </div>
@@ -141,11 +137,6 @@ START COURSE-DASHBOARD
                                 <li class="nav-item">
                                     <a class="nav-link" id="question-and-ans-tab" data-toggle="tab" href="#question-and-ans" role="tab" aria-controls="question-and-ans" aria-selected="false">
                                         Question & Ans
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="announcements-tab" data-toggle="tab" href="#announcements" role="tab" aria-controls="announcements" aria-selected="false">
-                                        Announcements
                                     </a>
                                 </li>
                             </ul>
@@ -284,9 +275,6 @@ START COURSE-DASHBOARD
                                                 <div class="lecture-overview-stats-item">
                                                     <ul class="generic-list-item">
                                                         <li><span>Skill level:</span>{{ $course->course->label }}</li>
-                                                        <li><span>Students:</span>83950</li>
-                                                        <li><span>Languages:</span>English</li>
-                                                        <li><span>Captions:</span>Yes</li>
                                                     </ul>
                                                 </div><!-- end lecture-overview-stats-item -->
                                                 <div class="lecture-overview-stats-item">
@@ -314,17 +302,6 @@ START COURSE-DASHBOARD
                                         <div class="lecture-overview-item">
                                             <div class="lecture-overview-stats-wrap d-flex">
                                                 <div class="lecture-overview-stats-item">
-                                                    <h3 class="fs-16 font-weight-semi-bold pb-2">Features</h3>
-                                                </div><!-- end lecture-overview-stats-item -->
-                                                <div class="lecture-overview-stats-item">
-                                                    <p>Available on <a href="#" class="text-color hover-underline">IOS</a> and <a href="#" class="text-color hover-underline">Android</a></p>
-                                                </div><!-- end lecture-overview-stats-item -->
-                                            </div><!-- end lecture-overview-stats-wrap -->
-                                        </div><!-- end lecture-overview-item -->
-                                        <div class="section-block"></div>
-                                        <div class="lecture-overview-item">
-                                            <div class="lecture-overview-stats-wrap d-flex">
-                                                <div class="lecture-overview-stats-item">
                                                     <h3 class="fs-16 font-weight-semi-bold pb-2">Description</h3>
                                                 </div><!-- end lecture-overview-stats-item -->
                                                 <div class="lecture-overview-stats-item lecture-overview-stats-wide-item lecture-description">
@@ -342,33 +319,25 @@ START COURSE-DASHBOARD
                                     </div><!-- end lecture-overview-wrap -->
                                 </div><!-- end tab-pane -->
 
-
-
-
                                 <div class="tab-pane fade" id="question-and-ans" role="tabpanel" aria-labelledby="question-and-ans-tab">
                                     <div class="lecture-overview-wrap lecture-quest-wrap">
                                         <div class="new-question-wrap">
                                             <button class="btn theme-btn theme-btn-transparent back-to-question-btn"><i class="la la-reply mr-1"></i>Back to all questions</button>
                                             <div class="new-question-body pt-40px">
                                                 <h3 class="fs-20 font-weight-semi-bold">My question relates to</h3>
-
                                                 <form method="post" action="{{ route('user.question') }}" class="pt-4">
                                                     @csrf
-
                                                     <input type="hidden" name="course_id" value="{{ $course->course_id }}">
                                                     <input type="hidden" name="instructor_id" value="{{ $course->instructor_id }}">
-
                                                     <div class="custom-control-wrap">
                                                         <div class="custom-control custom-radio mb-3 pl-0">
                                                             <input type="text" name="subject" class="form-control form--control pl-3">
 
                                                         </div>
-
                                                         <div class="custom-control custom-radio mb-3 pl-0">
                                                             <textarea class="form-control form--control pl-3" name="question" rows="4" placeholder="Write your response..."></textarea>
 
                                                         </div>
-
                                                     </div>
                                                     <div class="btn-box text-center">
                                                         <button type="submit" class="btn theme-btn w-100">Submit Question <i class="la la-arrow-right icon ml-1"></i></button>
@@ -377,15 +346,7 @@ START COURSE-DASHBOARD
                                             </div>
                                         </div><!-- end new-question-wrap -->
 
-
-
-
-
                                         <div class="question-overview-result-wrap">
-
-
-
-
                                             <div class="lecture-overview-item">
                                                 <div class="question-overview-result-header d-flex align-items-center justify-content-between">
                                                     <h3 class="fs-17 font-weight-semi-bold">{{ count($allquestion) }} questions in this course</h3>
@@ -462,100 +423,12 @@ START COURSE-DASHBOARD
                                         </div>
                                     </div>
                                 </div><!-- end tab-pane -->
-                                <div class="tab-pane fade" id="announcements" role="tabpanel" aria-labelledby="announcements-tab">
-                                    <div class="lecture-overview-wrap lecture-announcement-wrap">
-                                        <div class="lecture-overview-item">
-                                            <div class="media media-card align-items-center">
-                                                <a href="teacher-detail.html" class="media-img d-block rounded-full avatar-md">
-                                                    <img src="images/small-avatar-1.jpg" alt="Instructor avatar" class="rounded-full">
-                                                </a>
-                                                <div class="media-body">
-                                                    <h5 class="pb-1"><a href="teacher-detail.html">Alex Smith</a></h5>
-                                                    <div class="announcement-meta fs-15">
-                                                        <span>Posted an announcement</span>
-                                                        <span> · 3 years ago ·</span>
-                                                        <a href="#" class="btn-text" data-toggle="modal" data-target="#reportModal" title="Report abuse"><i class="la la-flag"></i></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="lecture-owner-decription pt-4">
-                                                <h3 class="fs-19 font-weight-semi-bold pb-3">Important Q&A support</h3>
-                                                <p>Happy 2019 to everyone, thank you for being a student and all of your support.</p>
-                                                <p><strong>Great job on enrolling and your current course progress. I encourage you keep in pursuit of your dreams :)</strong></p>
-                                                <p>The whole lot. In my course After Effects Complete Course packed with all Techniques and Methods (No Tricks and gimmicks).</p>
-                                                <p class="font-italic"><strong>Unfortunately this will result in delayed responses by me in the Q&A section and to direct messages. This is only for the next week and once back I will be back to 100% .</strong></p>
-                                                <p>I will continue to do my best to respond to as many questions as possible but only one person, regularly I spend 4-5 hours daily on this and with over 440000 students as you can image that its a lot of work.</p>
-                                                <p class="font-italic">Thank you once again for your understanding and for all of the wonderful students who I have had an opportunity to communicate with regularly and all of your encouragement.</p>
-                                                <p>Have an awesome day</p>
-                                                <p>Alex</p>
-                                            </div>
-                                            <div class="lecture-announcement-comment-wrap pt-4">
-                                                <div class="media media-card align-items-center">
-                                                    <div class="media-img rounded-full avatar-sm flex-shrink-0">
-                                                        <img src="images/small-avatar-1.jpg" alt="Instructor avatar" class="rounded-full">
-                                                    </div><!-- end media-img -->
-                                                    <div class="media-body">
-                                                        <form action="#">
-                                                            <div class="input-group">
-                                                                <input class="form-control form--control form--control-gray pl-3" type="text" name="search" placeholder="Enter your comment">
-                                                                <div class="input-group-append">
-                                                                    <button class="btn theme-btn" type="button"><i class="la la-arrow-right"></i></button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div><!-- end media-body -->
-                                                </div><!-- end media -->
-                                                <div class="comments pt-40px">
-                                                    <div class="media media-card mb-3 border-bottom border-bottom-gray pb-3">
-                                                        <div class="media-img rounded-full avatar-sm flex-shrink-0">
-                                                            <img src="images/small-avatar-2.jpg" alt="Instructor avatar" class="rounded-full">
-                                                        </div><!-- end media-img -->
-                                                        <div class="media-body">
-                                                            <div class="announcement-meta fs-15 lh-20">
-                                                                <a href="#" class="text-color">Tony Olsson</a>
-                                                                <span> · 3 years ago ·</span>
-                                                                <a href="#" class="btn-text" data-toggle="modal" data-target="#reportModal" title="Report abuse"><i class="la la-flag"></i></a>
-                                                            </div>
-                                                            <p class="pt-1">Occaecati cupiditate non provident, similique sunt in culpa fuga.</p>
-                                                        </div><!-- end media-body -->
-                                                    </div><!-- end media -->
-                                                    <div class="media media-card mb-3 border-bottom border-bottom-gray pb-3">
-                                                        <div class="media-img rounded-full avatar-sm flex-shrink-0">
-                                                            <img src="images/small-avatar-3.jpg" alt="Instructor avatar" class="rounded-full">
-                                                        </div><!-- end media-img -->
-                                                        <div class="media-body">
-                                                            <div class="announcement-meta fs-15 lh-20">
-                                                                <a href="#" class="text-color">Eduard-Dan</a>
-                                                                <span> · 2 years ago ·</span>
-                                                                <a href="#" class="btn-text" data-toggle="modal" data-target="#reportModal" title="Report abuse"><i class="la la-flag"></i></a>
-                                                            </div>
-                                                            <p class="pt-1">Occaecati cupiditate non provident, similique sunt in culpa fuga.</p>
-                                                        </div><!-- end media-body -->
-                                                    </div><!-- end media -->
-                                                </div><!-- end comments -->
-                                            </div><!-- end lecture-announcement-comment-wrap -->
-                                        </div><!-- end lecture-overview-item -->
-                                    </div>
-                                </div><!-- end tab-pane -->
                             </div><!-- end tab-content -->
                         </div><!-- end lecture-video-detail-body -->
                     </div><!-- end lecture-video-detail -->
                     <div class="cta-area py-4 bg-gray">
                         <div class="container-fluid">
-                            <div class="row align-items-center">
-                                <div class="col-lg-6">
-                                    <div class="cta-content-wrap">
-                                        <h3 class="fs-18 font-weight-semi-bold">Top companies choose <a href="for-business.html" class="text-color hover-underline">NAC Tax Center for Business</a> to build in-demand career skills.</h3>
-                                    </div>
-                                </div><!-- end col-lg-6 -->
-                                <div class="col-lg-6">
-                                    <div class="client-logo-wrap text-right">
-                                        <a href="#" class="client-logo-item client--logo-item-2 pr-3"><img src="{{ asset('frontend/images/sponsor-img.png') }}" alt="brand image"></a>
-                                        <a href="#" class="client-logo-item client--logo-item-2 pr-3"><img src="{{ asset('frontend/images/sponsor-img2.png') }}" alt="brand image"></a>
-                                        <a href="#" class="client-logo-item client--logo-item-2 pr-3"><img src="{{ asset('frontend/images/sponsor-img3.png') }}" alt="brand image"></a>
-                                    </div><!-- end client-logo-wrap -->
-                                </div><!-- end col-lg-6 -->
-                            </div><!-- end row -->
+
                         </div><!-- end container-fluid -->
                     </div><!-- end cta-area -->
                     <div class="footer-area pt-50px">
@@ -663,7 +536,7 @@ START COURSE-DASHBOARD
                                             <i class="la la-angle-up"></i>
                                             <span class="fs-15"> {{ $sec->section_title }}</span>
                                             <span class="course-duration">
-                                                <span>({{ count($lectures) }})</span>
+                                                <span>({{ count($lectures) }} min)</span>
                                             </span>
                                         </button>
                                     </div><!-- end card-header -->
@@ -674,12 +547,11 @@ START COURSE-DASHBOARD
                                                 <li class="course-item-link active">
                                                     <div class="course-item-content-wrap">
                                                         <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="courseCheckbox" required>
-                                                            <label class="custom-control-label custom--control-label" for="courseCheckbox"></label>
+                                                            <input type="checkbox" class="custom-control-input" id="courseCheckbox-{{ $sec->id }}" required>
+                                                            <label class="custom-control-label custom--control-label" for="courseCheckbox-{{ $sec->id }}"></label>
                                                         </div><!-- end custom-control -->
                                                         <div class="course-item-content">
-                                                            <h4 class="fs-15 lecture-title" data-video-url="{{ $lect->url }}" data-content="{!!$lect->content !!}">{{ $lect->lecture_title }}</h4>
-
+                                                            <h4 class="fs-15 lecture-title pt-2" data-video-url="{{ $lect->url }}" data-content="{!!$lect->content !!}">{{ $lect->lecture_title }}</h4>
                                                         </div><!-- end course-item-content -->
                                                     </div><!-- end course-item-content-wrap -->
                                                 </li>
@@ -883,83 +755,118 @@ START COURSE-DASHBOARD
     </div><!-- end modal -->
 
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script type="text/javascript">
-        // Function to open the first lecture when the page loads
-        function openFirstLecture() {
-            const firstLecture = document.querySelector('.lecture-title'); // Get the first lecture element
-            if (firstLecture) {
-                firstLecture.click(); // Trigger the click event on the first lecture
-            }
+
+    <script>
+        let ytPlayer;
+
+        // Ekstrak Video ID dari URL
+        function getYouTubeVideoId(url) {
+            const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length == 11) ? match[2] : null;
         }
 
-        // Function to handle lecture clicks and load content
-        function viewLesson(videoUrl, vimeoUrl, textContent) {
-            const video = document.getElementById("player");
-            const text = document.getElementById("textLesson");
-            const textContainer = document.createElement("div");
-
-            if (videoUrl && videoUrl.trim() !== "") {
-                video.classList.remove("d-none");
-                text.classList.add("d-none");
-                text.innerHTML = "";
-                video.setAttribute("src", videoUrl);
-            } else if (vimeoUrl && vimeoUrl.trim() !== "") {
-                video.classList.remove("d-none");
-                text.classList.add("d-none");
-                text.innerHTML = "";
-                video.setAttribute("src", vimeoUrl);
-            } else if (textContent && textContent.trim() !== "") {
-                video.classList.add("d-none");
-                text.classList.remove("d-none");
-                text.innerHTML = "";
-                textContainer.innerText = textContent;
-                textContainer.style.fontSize = "14px";
-                textContainer.style.textAlign = "left";
-                textContainer.style.paddingLeft = "40px";
-                textContainer.style.paddingRight = "40px";
-                text.appendChild(textContainer);
-            }
-        }
-
-        // Add a click event listener to all lecture elements
-        document.querySelectorAll('.lecture-title').forEach((lectureTitle) => {
-            lectureTitle.addEventListener('click', () => {
-                const videoUrl = lectureTitle.getAttribute('data-video-url');
-                const vimeoUrl = lectureTitle.getAttribute('data-vimeo-url');
-                const textContent = lectureTitle.getAttribute('data-content');
-                viewLesson(videoUrl, vimeoUrl, textContent);
-            });
-        });
-
-        // Open the first lecture when the page loads
-        window.addEventListener('load', () => {
-            openFirstLecture();
-        });
-
-
-        var player;
-
-        // Fungsi dipanggil otomatis oleh API saat sudah siap
+        // Triggered saat YouTube API siap
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                width: '100%',
-                height: '500',
-                videoId: '-_52s4rxPX4', // Ganti dengan ID video kamu
+            ytPlayer = new YT.Player('player', {
+                width: "100%",
+                height: "500",
                 events: {
-                    'onStateChange': onPlayerStateChange
+                    'onStateChange': onYouTubePlayerStateChange
                 }
             });
         }
 
-        // Tangani perubahan status pemutar
-        function onPlayerStateChange(event) {
+        // Deteksi video selesai
+        function onYouTubePlayerStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) {
-                console.log('Video selesai!');
-                // Jalankan aksi kamu di sini
-                alert('Video telah selesai ditonton!');
+                // Cari lecture aktif
+                const currentLecture = document.querySelector('.lecture-title.active');
+                let nextLecture = null;
+
+                if (currentLecture) {
+                    // Cari next lecture berikutnya
+                    nextLecture = currentLecture.nextElementSibling;
+                    console.log(currentLecture)
+
+                    while (nextLecture && !nextLecture.classList.contains('lecture-title')) {
+                        nextLecture = nextLecture.nextElementSibling;
+                    }
+                } else {
+                    // Jika tidak ada yang aktif, ambil yang pertama
+                    nextLecture = document.querySelector('.lecture-title');
+                }
+
+
+                if (nextLecture) {
+                    alert("Video selesai, lanjut ke materi berikutnya!");
+                    nextLecture.click();
+                } else {
+                    alert("Video selesai. Tidak ada materi berikutnya.");
+                }
             }
         }
+
+        // Load video atau text
+        function viewLesson(videoUrl, textContent, clickedElement) {
+            const video = document.getElementById("player");
+            const text = document.getElementById("textLesson");
+
+            // Highlight materi aktif
+            document.querySelectorAll('.lecture-title').forEach(el => el.classList.remove('active'));
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            }
+
+            if (videoUrl && videoUrl.trim() !== "") {
+                const videoId = getYouTubeVideoId(videoUrl);
+                if (videoId && ytPlayer) {
+                    video.classList.remove("d-none");
+                    text.classList.add("d-none");
+                    text.innerHTML = "";
+                    ytPlayer.loadVideoById(videoId);
+                } else {
+                    alert("URL YouTube tidak valid atau player belum siap.");
+                }
+            } else if (textContent && textContent.trim() !== "") {
+                if (ytPlayer) {
+                    ytPlayer.stopVideo();
+                }
+                video.classList.add("d-none");
+                text.classList.remove("d-none");
+                text.innerHTML = "";
+                const textContainer = document.createElement("div");
+                textContainer.innerText = textContent;
+                textContainer.style.fontSize = "14px";
+                textContainer.style.textAlign = "left";
+                textContainer.style.padding = "0 40px";
+                text.appendChild(textContainer);
+            }
+        }
+
+        // Auto buka materi pertama
+        function openFirstLecture() {
+            const firstLecture = document.querySelector('.lecture-title');
+            if (firstLecture) {
+                firstLecture.click();
+            }
+        }
+
+        // Listener klik materi
+        document.querySelectorAll('.lecture-title').forEach((lectureTitle) => {
+            lectureTitle.addEventListener('click', () => {
+                const videoUrl = lectureTitle.getAttribute('data-video-url');
+                const textContent = lectureTitle.getAttribute('data-content');
+                viewLesson(videoUrl, textContent, lectureTitle);
+            });
+        });
+
+        // Auto open first lecture on load
+        window.addEventListener('load', () => {
+            openFirstLecture();
+        });
     </script>
+
 
     @include('frontend.mycourse.body.footer')
 </body>
