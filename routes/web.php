@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstructorController;
@@ -38,7 +37,6 @@ use App\Http\Controllers\Backend\ChatController;
 // });
 
 Route::get('/', [UserController::class, 'Index'])->name('index');
-
 
 Route::get('/dashboard', function () {
     return view('frontend.dashboard.index');
@@ -361,10 +359,8 @@ Route::controller(CartController::class)->group(function () {
     Route::get('/cart-remove/{rowId}', 'CartRemove');
 });
 
-
 Route::post('/coupon-apply', [CartController::class, 'CouponApply']);
 Route::post('/inscoupon-apply', [CartController::class, 'InsCouponApply']);
-
 
 Route::get('/coupon-calculation', [CartController::class, 'CouponCalculation']);
 Route::get('/coupon-remove', [CartController::class, 'CouponRemove']);
@@ -374,7 +370,7 @@ Route::get('/checkout', [CartController::class, 'CheckoutCreate'])->name('checko
 
 Route::post('/payment', [CartController::class, 'Payment'])->name('payment');
 Route::post('/stripe_order', [CartController::class, 'StripeOrder'])->name('stripe_order');
-
+Route::post('/mark-notification-as-read/{notification}', [CartController::class, 'MarkAsRead']);
 
 Route::post('/store/review', [ReviewController::class, 'StoreReview'])->name('store.review');
 
@@ -382,7 +378,6 @@ Route::get('/blog/details/{slug}', [BlogController::class, 'BlogDetails']);
 Route::get('/blog/cat/list/{id}', [BlogController::class, 'BlogCatList']);
 Route::get('/blog', [BlogController::class, 'BlogList'])->name('blog');
 
-Route::post('/mark-notification-as-read/{notification}', [CartController::class, 'MarkAsRead']);
 
 // Chat Post Request Route
 Route::post('/send-message', [ChatController::class, 'SendMessage']);
