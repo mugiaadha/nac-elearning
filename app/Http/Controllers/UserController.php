@@ -12,7 +12,12 @@ class UserController extends Controller
     public function Index()
     {
         return view('frontend.index');
-    } // End Method 
+    }
+
+    public function home()
+    {
+        return view('new_frontend.home');
+    }
 
     public function UserProfile()
     {

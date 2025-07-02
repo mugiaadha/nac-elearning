@@ -37,6 +37,7 @@ use App\Http\Controllers\Backend\ChatController;
 // });
 
 Route::get('/', [UserController::class, 'Index'])->name('index');
+Route::get('/v2', [UserController::class, 'home'])->name('home');
 
 Route::get('/dashboard', function () {
     return view('frontend.dashboard.index');
