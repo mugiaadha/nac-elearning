@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\CourseSection;
 use App\Models\Question;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class QuestionController extends Controller
 {
-    public function UserQuestion(Request $request){
+    public function UserQuestion(Request $request)
+    {
 
         $course_id = $request->course_id;
         $instructor_id = $request->instructor_id;
@@ -29,28 +29,45 @@ class QuestionController extends Controller
             'message' => 'Message Send Successfully',
             'alert-type' => 'success'
         );
-        return redirect()->back()->with($notification);  
-
+        return redirect()->back()->with($notification);
     } // End Method 
 
-    public function InstructorAllQuestion(){
-
+    public function InstructorAllQuestion()
+    {
         $id = Auth::user()->id;
-        $question = Question::where('instructor_id',$id)->where('parent_id', null)->orderBy('id','desc')->get();
-        return view('instructor.question.all_question',compact('question'));
 
-    }// End Method 
+        $question = Question::where('instructor_id', $id)
+            ->whereNull('parent_id')
+            ->whereIn('id', function ($query) use ($id) {
+                $query->selectRaw('MAX(id)')
+                    ->from('questions')
+                    ->where('instructor_id', $id)
+                    ->whereNull('parent_id')
+                    ->groupBy('user_id');
+            })
+            ->with('user') // relasi tetap jalan
+            ->orderByDesc('id')
+            ->get();
 
-    public function QuestionDetails($id){
+        return view('instructor.question.all_question', compact('question'));
+    } // End Method 
 
+    public function QuestionDetails($id)
+    {
         $question = Question::find($id);
-        $replay = Question::where('parent_id',$id)->orderBy('id','asc')->get();
-        return view('instructor.question.question_details',compact('question','replay'));
+        $questions = Question::where([
+            'course_id' => $question->course_id,
+            'user_id' => $question->user_id,
+        ])
+            ->orderBy('id', 'asc')
+            ->get();
+        $replay = Question::where('parent_id', $id)->orderBy('id', 'asc')->get();
 
-    }// End Method 
+        return view('instructor.question.question_details', compact('question', 'questions', 'replay'));
+    } // End Method 
 
-    public function InstructorReplay(Request $request){
-
+    public function InstructorReplay(Request $request)
+    {
         $que_id = $request->qid;
         $user_id = $request->user_id;
         $course_id = $request->course_id;
@@ -58,6 +75,7 @@ class QuestionController extends Controller
 
         Question::insert([
             'course_id' => $course_id,
+            'subject' => auth()->user()->name,
             'user_id' => $user_id,
             'instructor_id' => $instructor_id,
             'parent_id' => $que_id,
@@ -69,11 +87,6 @@ class QuestionController extends Controller
             'message' => 'Message Send Successfully',
             'alert-type' => 'success'
         );
-        return redirect()->route('instructor.all.question')->with($notification); 
-
-
-    }// End Method 
-
-
-
+        return redirect()->route('instructor.all.question')->with($notification);
+    } // End Method 
 }

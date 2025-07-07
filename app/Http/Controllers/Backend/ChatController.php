@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\ChatMessage; 
+use App\Models\ChatMessage;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
-    public function SendMessage(Request $request){
-        
+    public function SendMessage(Request $request)
+    {
         $request->validate([
             'msg' => 'required'
         ]);
@@ -25,55 +25,51 @@ class ChatController extends Controller
         ]);
 
         return response()->json(['message' => 'Message Send Successfully']);
-
     } // End Method 
 
-    public function GetAllUsers(){
+    public function GetAllUsers()
+    {
 
-        $chats = ChatMessage::orderBy('id','DESC')
-                ->where('sender_id',auth()->id())
-                ->orWhere('receiver_id',auth()->id())
-                ->get();
+        $chats = ChatMessage::orderBy('id', 'DESC')
+            ->where('sender_id', auth()->id())
+            ->orWhere('receiver_id', auth()->id())
+            ->get();
 
-        $users = $chats->flatMap(function($chat){
+        $users = $chats->flatMap(function ($chat) {
             if ($chat->sender_id === auth()->id()) {
-               return [$chat->serder, $chat->receiver];
+                return [$chat->serder, $chat->receiver];
             }
             return [$chat->receiver, $chat->serder];
-        })->unique();       
+        })->unique();
 
-        return $users;   
+        return $users;
+    } // End Method 
 
-    }// End Method 
-
-    public function UserMsgById($userId){
-
+    public function UserMsgById($userId)
+    {
         $user = User::find($userId);
 
         if ($user) {
-           $messages = ChatMessage::where(function($q) use ($userId){
-                     $q->where('sender_id',auth()->id());
-                     $q->where('receiver_id',$userId);
-                     })->orWhere(function($q) use ($userId){
-                        $q->where('sender_id',$userId);
-                        $q->where('receiver_id',auth()->id());
-                     })->with('user')->get();
+            $messages = ChatMessage::where(function ($q) use ($userId) {
+                $q->where('sender_id', auth()->id());
+                $q->where('receiver_id', $userId);
+            })->orWhere(function ($q) use ($userId) {
+                $q->where('sender_id', $userId);
+                $q->where('receiver_id', auth()->id());
+            })->with('user')->get();
 
-                     return response()->json([
-                        'user' => $user,
-                        'messages' => $messages, 
-                     ]);
-        }else {
+            return response()->json([
+                'user' => $user,
+                'messages' => $messages,
+            ]);
+        } else {
             abort(404);
         }
+    } // End Method 
 
-    }// End Method 
 
-
-    public function LiveChat(){
+    public function LiveChat()
+    {
         return view('instructor.chat.live_chat');
     }
-
-
 }
- 

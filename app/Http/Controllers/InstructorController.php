@@ -3,17 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class InstructorController extends Controller
 {
-    public function InstructorDashboard(){
+    public function InstructorDashboard()
+    {
         return view('instructor.index');
     } // End Mehtod 
 
-    public function InstructorLogout(Request $request) {
+    public function InstructorLogout(Request $request)
+    {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
@@ -29,57 +32,77 @@ class InstructorController extends Controller
     } // End Method 
 
 
-    public function InstructorLogin(){
+    public function InstructorLogin()
+    {
         return view('instructor.instructor_login');
     } // End Method 
 
-    public function InstructorProfile(){
+    public function InstructorProfile()
+    {
 
         $id = Auth::user()->id;
         $profileData = User::find($id);
-        return view('instructor.instructor_profile_view',compact('profileData'));
-    }// End Method
+        return view('instructor.instructor_profile_view', compact('profileData'));
+    } // End Method
 
+    public function InstructorProfileStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
-    public function InstructorProfileStore(Request $request){
+        $id = Auth::id();
+        $data = User::findOrFail($id);
 
-        $id = Auth::user()->id;
-        $data = User::find($id);
         $data->name = $request->name;
         $data->username = $request->username;
         $data->email = $request->email;
         $data->phone = $request->phone;
         $data->address = $request->address;
 
-        if ($request->file('photo')) {
-           $file = $request->file('photo');
-           @unlink(public_path('upload/instructor_images/'.$data->photo));
-           $filename = date('YmdHi').$file->getClientOriginalName();
-           $file->move(public_path('upload/instructor_images'),$filename);
-           $data['photo'] = $filename; 
+        if ($request->hasFile('photo')) {
+            $path = 'storage/upload/instructor_images/';
+
+            // Hapus foto lama jika ada
+            if ($data->photo && Storage::disk('public')->exists($data->photo)) {
+                Storage::disk('public')->delete($data->photo);
+            }
+
+            $file = $request->file('photo');
+            $filename = date('YmdHi') . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            // Upload aman Laravel
+            $file->storeAs($path, $filename, 'public');
+
+            // Simpan path relatif
+            $data->photo = 'storage/' . $path . $filename;
         }
 
         $data->save();
 
-        $notification = array(
-            'message' => 'Instructor Profile Updated Successfully',
-            'alert-type' => 'success'
-        );
-        return redirect()->back()->with($notification);
-        
-    }// End Method
-    
+        return redirect()->back()->with([
+            'message' => 'Admin Profile Updated Successfully',
+            'alert-type' => 'success',
+        ]);
+    }
 
-    public function InstructorChangePassword(){
+
+    public function InstructorChangePassword()
+    {
 
         $id = Auth::user()->id;
         $profileData = User::find($id);
-        return view('instructor.instructor_change_password',compact('profileData'));
+        return view('instructor.instructor_change_password', compact('profileData'));
+    } // End Method
 
-    }// End Method
 
-
-    public function InstructorPasswordUpdate(Request $request){
+    public function InstructorPasswordUpdate(Request $request)
+    {
 
         /// Validation 
         $request->validate([
@@ -88,7 +111,7 @@ class InstructorController extends Controller
         ]);
 
         if (!Hash::check($request->old_password, auth::user()->password)) {
-            
+
             $notification = array(
                 'message' => 'Old Password Does not Match!',
                 'alert-type' => 'error'
@@ -105,12 +128,10 @@ class InstructorController extends Controller
             'message' => 'Password Change Successfully',
             'alert-type' => 'success'
         );
-        return back()->with($notification); 
-
-    }// End Method
+        return back()->with($notification);
+    } // End Method
 
 
 
 
 }
- 

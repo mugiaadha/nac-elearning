@@ -18,7 +18,7 @@
                 <div class="card-body">
                     <div class="media media-card align-items-center pb-3">
                         <div class="media-img avatar-md">
-                            <img src="{{ (!empty($item->user->photo)) ? url('upload/user_images/'.$item->user->photo) : url('upload/no_user.png')}}" alt="Testimonial avatar" class="rounded-full">
+                            <img src="{{ (!empty($item->user->photo)) ? url($item->user->photo) : url('upload/no_user.png')}}" alt="Testimonial avatar" class="rounded-full">
                         </div>
                         <div class="media-body">
                             <h5>{{ $item->user->name }}</h5>

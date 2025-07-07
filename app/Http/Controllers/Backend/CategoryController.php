@@ -6,93 +6,104 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\SubCategory;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
 class CategoryController extends Controller
 {
-    public function AllCategory(){
+    public function AllCategory()
+    {
 
         $category = Category::latest()->get();
-        return view('admin.backend.category.all_category',compact('category'));
+        return view('admin.backend.category.all_category', compact('category'));
+    } // End Method 
 
-    }// End Method 
-
-    public function AddCategory(){
+    public function AddCategory()
+    {
         return view('admin.backend.category.add_category');
-    }// End Method 
+    } // End Method 
 
-    public function StoreCategory(Request $request){
-
-        $image = $request->file('image');  
-        $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-        Image::make($image)->resize(370,246)->save('upload/category/'.$name_gen);
-        $save_url = 'upload/category/'.$name_gen;
-
-        Category::insert([
-            'category_name' => $request->category_name,
-            'category_slug' => strtolower(str_replace(' ','-',$request->category_name)),
-            'image' => $save_url,        
+    public function StoreCategory(Request $request)
+    {
+        $request->validate([
+            'category_name' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $notification = array(
+        $image = $request->file('image');
+        $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+
+        // Resize dan simpan ke sementara
+        $img = Image::make($image)->resize(370, 246)->encode($image->getClientOriginalExtension());
+
+        // Simpan ke storage/app/public/upload/category
+        Storage::disk('public')->put('upload/category/' . $name_gen, (string) $img);
+
+        // Path untuk disimpan di DB
+        $save_url = 'storage/upload/category/' . $name_gen;
+
+        Category::create([
+            'category_name' => $request->category_name,
+            'category_slug' => strtolower(str_replace(' ', '-', $request->category_name)),
+            'image' => $save_url,
+        ]);
+
+        return redirect()->route('all.category')->with([
             'message' => 'Category Inserted Successfully',
-            'alert-type' => 'success'
-        );
-        return redirect()->route('all.category')->with($notification);  
+            'alert-type' => 'success',
+        ]);
+    }
 
-    }// End Method 
-
-
-    public function EditCategory($id){
+    public function EditCategory($id)
+    {
 
         $category = Category::find($id);
-        return view('admin.backend.category.edit_category',compact('category'));
-    }// End Method 
+        return view('admin.backend.category.edit_category', compact('category'));
+    } // End Method 
 
-    public function UpdateCategory(Request $request){
-        
+    public function UpdateCategory(Request $request)
+    {
+        $request->validate([
+            'category_name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
         $cat_id = $request->id;
+        $category = Category::findOrFail($cat_id);
 
-        if ($request->file('image')) {
+        $data = [
+            'category_name' => $request->category_name,
+            'category_slug' => strtolower(str_replace(' ', '-', $request->category_name)),
+        ];
 
-            $image = $request->file('image');  
-            $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-            Image::make($image)->resize(370,246)->save('upload/category/'.$name_gen);
-            $save_url = 'upload/category/'.$name_gen;
-    
-            Category::find($cat_id)->update([
-                'category_name' => $request->category_name,
-                'category_slug' => strtolower(str_replace(' ','-',$request->category_name)),
-                'image' => $save_url,        
-    
-            ]);
-    
-            $notification = array(
-                'message' => 'Category Updated with image Successfully',
-                'alert-type' => 'success'
-            );
-            return redirect()->route('all.category')->with($notification);  
-        
-        } else {
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($category->image && Storage::disk('public')->exists(str_replace('storage/', '', $category->image))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $category->image));
+            }
 
-            Category::find($cat_id)->update([
-                'category_name' => $request->category_name,
-                'category_slug' => strtolower(str_replace(' ','-',$request->category_name)),  
-    
-            ]);
-    
-            $notification = array(
-                'message' => 'Category Updated without image Successfully',
-                'alert-type' => 'success'
-            );
-            return redirect()->route('all.category')->with($notification);
+            $image = $request->file('image');
+            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
 
-        } // end else 
+            $img = Image::make($image)->resize(370, 246)->encode($image->getClientOriginalExtension());
+            Storage::disk('public')->put('upload/category/' . $name_gen, (string) $img);
 
-    }// End Method 
+            $save_url = 'storage/upload/category/' . $name_gen;
+            $data['image'] = $save_url;
+        }
 
+        $category->update($data);
 
-    public function DeleteCategory($id){
+        return redirect()->route('all.category')->with([
+            'message' => $request->hasFile('image')
+                ? 'Category updated with image successfully.'
+                : 'Category updated without image successfully.',
+            'alert-type' => 'success',
+        ]);
+    }
+
+    public function DeleteCategory($id)
+    {
 
         $item = Category::find($id);
         $img = $item->image;
@@ -100,38 +111,38 @@ class CategoryController extends Controller
 
         Category::find($id)->delete();
 
-            $notification = array(
-                'message' => 'Category Deleted Successfully',
-                'alert-type' => 'success'
-            );
-            return redirect()->back()->with($notification);
-
-    }// End Method 
+        $notification = array(
+            'message' => 'Category Deleted Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
+    } // End Method 
 
     ////////// All SubCategory Methods //////////////
 
-    public function AllSubCategory(){
+    public function AllSubCategory()
+    {
 
         $subcategory = SubCategory::latest()->get();
-        return view('admin.backend.subcategory.all_subcategory',compact('subcategory'));
+        return view('admin.backend.subcategory.all_subcategory', compact('subcategory'));
+    } // End Method 
 
-    }// End Method 
 
-
-    public function AddSubCategory(){
+    public function AddSubCategory()
+    {
 
         $category = Category::latest()->get();
-        return view('admin.backend.subcategory.add_subcategory',compact('category'));
+        return view('admin.backend.subcategory.add_subcategory', compact('category'));
+    } // End Method 
 
-    }// End Method 
 
-
-    public function StoreSubCategory(Request $request){ 
+    public function StoreSubCategory(Request $request)
+    {
 
         SubCategory::insert([
             'category_id' => $request->category_id,
             'subcategory_name' => $request->subcategory_name,
-            'subcategory_slug' => strtolower(str_replace(' ','-',$request->subcategory_name)), 
+            'subcategory_slug' => strtolower(str_replace(' ', '-', $request->subcategory_name)),
 
         ]);
 
@@ -139,28 +150,28 @@ class CategoryController extends Controller
             'message' => 'SubCategory Inserted Successfully',
             'alert-type' => 'success'
         );
-        return redirect()->route('all.subcategory')->with($notification);  
+        return redirect()->route('all.subcategory')->with($notification);
+    } // End Method 
 
-    }// End Method 
 
-
-    public function EditSubCategory($id){
+    public function EditSubCategory($id)
+    {
 
         $category = Category::latest()->get();
         $subcategory = SubCategory::find($id);
-        return view('admin.backend.subcategory.edit_subcategory',compact('category','subcategory'));
+        return view('admin.backend.subcategory.edit_subcategory', compact('category', 'subcategory'));
+    } // End Method
 
-    }// End Method
 
-
-    public function UpdateSubCategory(Request $request){ 
+    public function UpdateSubCategory(Request $request)
+    {
 
         $subcat_id = $request->id;
 
         SubCategory::find($subcat_id)->update([
             'category_id' => $request->category_id,
             'subcategory_name' => $request->subcategory_name,
-            'subcategory_slug' => strtolower(str_replace(' ','-',$request->subcategory_name)), 
+            'subcategory_slug' => strtolower(str_replace(' ', '-', $request->subcategory_name)),
 
         ]);
 
@@ -168,12 +179,12 @@ class CategoryController extends Controller
             'message' => 'SubCategory Updated Successfully',
             'alert-type' => 'success'
         );
-        return redirect()->route('all.subcategory')->with($notification);  
+        return redirect()->route('all.subcategory')->with($notification);
+    } // End Method 
 
-    }// End Method 
 
-
-    public function DeleteSubCategory($id){
+    public function DeleteSubCategory($id)
+    {
 
         SubCategory::find($id)->delete();
 
@@ -182,10 +193,9 @@ class CategoryController extends Controller
             'alert-type' => 'success'
         );
         return redirect()->back()->with($notification);
-
-    }// End Method 
-
+    } // End Method 
 
 
 
-} 
+
+}

@@ -13,7 +13,7 @@
         <div class="breadcrumb-content">
             <div class="media media-card align-items-center pb-4">
                 <div class="media-img media--img media-img-md rounded-full">
-                    <img class="rounded-full" src="{{ (!empty($instructor->photo)) ? url('upload/instructor_images/'.$instructor->photo) : url('upload/no_user.png')}}" alt="Student thumbnail image">
+                    <img class="rounded-full" src="{{ (!empty($instructor->photo)) ? url($instructor->photo) : url('upload/no_user.png')}}" alt="Student thumbnail image">
                 </div>
                 <div class="media-body">
                     <h2 class="section__title fs-30">{{ $instructor->name }}</h2>

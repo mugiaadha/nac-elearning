@@ -136,7 +136,7 @@ START COURSE-DASHBOARD
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="question-and-ans-tab" data-toggle="tab" href="#question-and-ans" role="tab" aria-controls="question-and-ans" aria-selected="false">
-                                        Question & Ans
+                                        Question & Answer
                                     </a>
                                 </li>
                             </ul>
@@ -250,12 +250,6 @@ START COURSE-DASHBOARD
                                                     </div><!-- end card-body -->
                                                 </div><!-- end collapse -->
                                             </div><!-- end card -->
-
-
-
-
-
-
                                         </div><!-- end accordion-->
                                     </div><!-- end mobile-course-menu -->
                                 </div><!-- end tab-pane -->
@@ -331,8 +325,7 @@ START COURSE-DASHBOARD
                                                     <input type="hidden" name="instructor_id" value="{{ $course->instructor_id }}">
                                                     <div class="custom-control-wrap">
                                                         <div class="custom-control custom-radio mb-3 pl-0">
-                                                            <input type="text" name="subject" class="form-control form--control pl-3">
-
+                                                            <input type="hidden" name="subject" class="form-control form--control pl-3" value="{{ auth()->user()->name }}">
                                                         </div>
                                                         <div class="custom-control custom-radio mb-3 pl-0">
                                                             <textarea class="form-control form--control pl-3" name="question" rows="4" placeholder="Write your response..."></textarea>
@@ -366,7 +359,7 @@ START COURSE-DASHBOARD
                                                     @foreach ($question as $que)
                                                     <div class="media media-card border-bottom border-bottom-gray py-4 px-3">
                                                         <div class="media-img rounded-full flex-shrink-0 avatar-sm">
-                                                            <img class="rounded-full" src="{{ (!empty($que->user->photo)) ? url('upload/user_images/'.$que->user->photo) : url('upload/no_user.png')}}" alt="User image">
+                                                            <img class="rounded-full" src="{{ (!empty($que->user->photo)) ? url($que->user->photo) : url('upload/no_user.png')}}" alt="User image">
                                                         </div>
                                                         <div class="media-body">
                                                             <div class="d-flex align-items-center justify-content-between">
@@ -392,7 +385,7 @@ START COURSE-DASHBOARD
                                                     @foreach ($replay as $rep)
                                                     <div class="media media-card border-bottom border-bottom-gray py-4 px-3" style="background: #e6e6e6">
                                                         <div class="media-img rounded-full flex-shrink-0 avatar-sm">
-                                                            <img class="rounded-full" src="{{ (!empty($rep->instructor->photo)) ? url('upload/instructor_images/'.$rep->instructor->photo) : url('upload/no_user.png')}}" alt="User image">
+                                                            <img class="rounded-full" src="{{ (!empty($rep->instructor->photo)) ? url($rep->instructor->photo) : url('upload/no_user.png')}}" alt="User image">
                                                         </div>
                                                         <div class="media-body">
                                                             <div class="d-flex align-items-center justify-content-between">

@@ -59,16 +59,6 @@ $status = $instructorId->status;
 
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-purchase-tag-alt'></i></div>
-                <div class="menu-title">Coupon</div>
-            </a>
-            <ul>
-                <li><a href="{{ route('instructor.all.coupon') }}"><i class='bx bx-gift'></i>All Coupon</a></li>
-            </ul>
-        </li>
-
-        <li>
-            <a class="has-arrow" href="javascript:;">
                 <div class="parent-icon"><i class='bx bx-star'></i></div>
                 <div class="menu-title">Reivew</div>
             </a>

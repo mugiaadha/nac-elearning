@@ -12,7 +12,9 @@ use App\Models\CourseSection;
 use App\Models\CourseLecture;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
@@ -41,32 +43,33 @@ class CourseController extends Controller
 
     public function StoreCourse(Request $request)
     {
-
         $request->validate([
-            'video' => 'required|mimes:mp4|max:10000',
+            'video' => 'required|mimes:mp4|max:50000',
+            'course_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
+        // Proses Gambar
         $image = $request->file('course_image');
-        $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-        Image::make($image)->resize(370, 246)->save('upload/course/thambnail/' . $name_gen);
-        $save_url = 'upload/course/thambnail/' . $name_gen;
+        $imageName = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+        $img = Image::make($image)->resize(370, 246)->encode($image->getClientOriginalExtension());
+        Storage::disk('public')->put('upload/course/thumbnail/' . $imageName, (string) $img);
+        $save_image_url = 'upload/course/thumbnail/' . $imageName;
 
+        // Proses Video
         $video = $request->file('video');
-        $videoName = time() . '.' . $video->getClientOriginalExtension();
-        $video->move(public_path('upload/course/video/'), $videoName);
-        $save_video = 'upload/course/video/' . $videoName;
+        $videoName = time() . '_' . uniqid() . '.' . $video->getClientOriginalExtension();
+        $video->storeAs('upload/course/video', $videoName, 'public');
+        $save_video_url = 'upload/course/video/' . $videoName;
 
         $course_id = Course::insertGetId([
-
             'category_id' => $request->category_id,
             'subcategory_id' => $request->subcategory_id,
-            'instructor_id' => Auth::user()->id,
+            'instructor_id' => Auth::id(),
             'course_title' => $request->course_title,
             'course_name' => $request->course_name,
-            'course_name_slug' => strtolower(str_replace(' ', '-', $request->course_name)),
+            'course_name_slug' => Str::slug($request->course_name),
             'description' => $request->description,
-            'video' => $save_video,
-
+            'video' => $save_video_url,
             'label' => $request->label,
             'duration' => $request->duration,
             'resources' => $request->resources,
@@ -74,36 +77,29 @@ class CourseController extends Controller
             'selling_price' => $request->selling_price,
             'discount_price' => $request->discount_price,
             'prerequisites' => $request->prerequisites,
-
             'bestseller' => $request->bestseller,
             'featured' => $request->featured,
             'highestrated' => $request->highestrated,
             'status' => 1,
-            'course_image' => $save_url,
-            'created_at' => Carbon::now(),
-
+            'course_image' => $save_image_url,
+            'created_at' => now(),
         ]);
 
-        /// Course Goals Add Form 
-
-        $goles = Count($request->course_goals);
-        if ($goles != NULL) {
-            for ($i = 0; $i < $goles; $i++) {
-                $gcount = new Course_goal();
-                $gcount->course_id = $course_id;
-                $gcount->goal_name = $request->course_goals[$i];
-                $gcount->save();
+        // Course Goals
+        if ($request->course_goals) {
+            foreach ($request->course_goals as $goal) {
+                Course_goal::create([
+                    'course_id' => $course_id,
+                    'goal_name' => $goal,
+                ]);
             }
         }
-        /// End Course Goals Add Form 
 
-        $notification = array(
+        return redirect()->route('all.course')->with([
             'message' => 'Course Inserted Successfully',
-            'alert-type' => 'success'
-        );
-        return redirect()->route('all.course')->with($notification);
-    } // End Method 
-
+            'alert-type' => 'success',
+        ]);
+    }
 
     public function EditCourse($id)
     {
@@ -115,10 +111,8 @@ class CourseController extends Controller
         return view('instructor.courses.edit_course', compact('course', 'categories', 'subcategories', 'goals'));
     } // End Method 
 
-
     public function UpdateCourse(Request $request)
     {
-
         $cid = $request->course_id;
 
         Course::find($cid)->update([
@@ -151,62 +145,69 @@ class CourseController extends Controller
         return redirect()->route('all.course')->with($notification);
     } // End Method 
 
-
     public function UpdateCourseImage(Request $request)
     {
-
-        $course_id = $request->id;
-        $oldImage = $request->old_img;
-
-        $image = $request->file('course_image');
-        $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-        Image::make($image)->resize(370, 246)->save('upload/course/thambnail/' . $name_gen);
-        $save_url = 'upload/course/thambnail/' . $name_gen;
-
-        if (file_exists($oldImage)) {
-            unlink($oldImage);
-        }
-
-        Course::find($course_id)->update([
-            'course_image' => $save_url,
-            'updated_at' => Carbon::now(),
+        $request->validate([
+            'course_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $notification = array(
-            'message' => 'Course Image Updated Successfully',
-            'alert-type' => 'success'
-        );
-        return redirect()->back()->with($notification);
-    } // End Method 
+        $course_id = $request->id;
+        $course = Course::findOrFail($course_id);
 
+        // Hapus gambar lama jika ada
+        if ($course->course_image && Storage::disk('public')->exists($course->course_image)) {
+            Storage::disk('public')->delete($course->course_image);
+        }
+
+        // Upload gambar baru
+        $image = $request->file('course_image');
+        $imageName = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+        $img = Image::make($image)->resize(370, 246)->encode($image->getClientOriginalExtension());
+        Storage::disk('public')->put('upload/course/thumbnail/' . $imageName, (string) $img);
+        $save_image_url = 'storage/upload/course/thumbnail/' . $imageName;
+
+        $course->update([
+            'course_image' => $save_image_url,
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->back()->with([
+            'message' => 'Course Image Updated Successfully',
+            'alert-type' => 'success',
+        ]);
+    }
 
     public function UpdateCourseVideo(Request $request)
     {
+        $request->validate([
+            'video' => 'required|mimes:mp4,mov,avi,wmv|max:50000', // 50MB max (sesuaikan)
+        ]);
 
         $course_id = $request->vid;
-        $oldVideo = $request->old_vid;
+        $course = Course::findOrFail($course_id);
 
-        $video = $request->file('video');
-        $videoName = time() . '.' . $video->getClientOriginalExtension();
-        $video->move(public_path('upload/course/video/'), $videoName);
-        $save_video = 'upload/course/video/' . $videoName;
-
-        if (file_exists($oldVideo)) {
-            unlink($oldVideo);
+        // Hapus video lama jika ada
+        if ($course->video && Storage::disk('public')->exists($course->video)) {
+            Storage::disk('public')->delete($course->video);
         }
 
-        Course::find($course_id)->update([
+        // Upload video baru
+        $video = $request->file('video');
+        $videoName = time() . '_' . uniqid() . '.' . $video->getClientOriginalExtension();
+        $video->storeAs('upload/course/video', $videoName, 'public');
+
+        $save_video = 'storage/upload/course/video/' . $videoName;
+
+        $course->update([
             'video' => $save_video,
             'updated_at' => Carbon::now(),
         ]);
 
-        $notification = array(
+        return redirect()->back()->with([
             'message' => 'Course Video Updated Successfully',
-            'alert-type' => 'success'
-        );
-        return redirect()->back()->with($notification);
+            'alert-type' => 'success',
+        ]);
     }
-
 
     public function UpdateCourseGoal(Request $request)
     {

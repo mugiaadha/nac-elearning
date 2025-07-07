@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Course;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use Intervention\Image\Facades\Image;
 
 class AdminController extends Controller
 {
@@ -48,34 +49,50 @@ class AdminController extends Controller
         return view('admin.admin_profile_view', compact('profileData'));
     } // End Method
 
-
     public function AdminProfileStore(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
-        $id = Auth::user()->id;
-        $data = User::find($id);
+        $data = User::findOrFail(auth()->user()->id);
+
         $data->name = $request->name;
         $data->username = $request->username;
         $data->email = $request->email;
         $data->phone = $request->phone;
         $data->address = $request->address;
 
-        if ($request->file('photo')) {
+        if ($request->hasFile('photo')) {
+            $path = '/upload/admin_images/';
+
+            // Hapus foto lama jika ada
+            if ($data->photo && Storage::disk('public')->exists($data->photo)) {
+                Storage::disk('public')->delete($data->photo);
+            }
+
             $file = $request->file('photo');
-            @unlink(public_path('upload/admin_images/' . $data->photo));
-            $filename = date('YmdHi') . $file->getClientOriginalName();
-            $file->move(public_path('upload/admin_images'), $filename);
-            $data['photo'] = $filename;
+            $filename = date('YmdHi') . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            // Upload aman Laravel
+            $file->storeAs($path, $filename, 'public');
+
+            // Simpan path relatif
+            $data->photo = 'storage/' . $path . $filename;
         }
 
         $data->save();
 
-        $notification = array(
+        return redirect()->back()->with([
             'message' => 'Admin Profile Updated Successfully',
-            'alert-type' => 'success'
-        );
-        return redirect()->back()->with($notification);
-    } // End Method
+            'alert-type' => 'success',
+        ]);
+    }
 
     public function AdminChangePassword()
     {

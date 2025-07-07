@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -29,31 +31,38 @@ class UserController extends Controller
 
     public function UserProfileUpdate(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
-        $id = Auth::user()->id;
-        $data = User::find($id);
-        $data->name = $request->name;
-        $data->username = $request->username;
-        $data->email = $request->email;
-        $data->phone = $request->phone;
-        $data->address = $request->address;
+        $user = auth()->user();
+        $user = user::findorFail($user->id);
 
-        if ($request->file('photo')) {
-            $file = $request->file('photo');
-            @unlink(public_path('upload/user_images/' . $data->photo));
-            $filename = date('YmdHi') . $file->getClientOriginalName();
-            $file->move(public_path('upload/user_images'), $filename);
-            $data['photo'] = $filename;
+        $data = $request->only(['name', 'username', 'email', 'phone', 'address']);
+
+        if ($request->hasFile('photo')) {
+            // Hapus foto lama jika ada
+            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+                Storage::disk('public')->delete($user->photo);
+            }
+
+            $path = $request->file('photo')->store('upload/user_images', 'public');
+
+            $data['photo'] = 'storage/' . $path;
         }
 
-        $data->save();
+        $user->update($data);
 
-        $notification = array(
+        return back()->with([
             'message' => 'User Profile Updated Successfully',
-            'alert-type' => 'success'
-        );
-        return redirect()->back()->with($notification);
-    } // End Method 
+            'alert-type' => 'success',
+        ]);
+    }
 
     public function UserLogout(Request $request)
     {

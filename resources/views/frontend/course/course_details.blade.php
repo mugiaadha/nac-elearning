@@ -247,7 +247,7 @@
                             <div class="media media-card">
                                 <div class="instructor-img">
                                     <a href="teacher-detail.html" class="media-img d-block">
-                                        <img class="lazy" src="{{ (!empty($course->user->photo)) ? url('upload/instructor_images/'.$course->user->photo) : url('upload/no_user.png')}}" data-src="images/small-avatar-1.jpg" alt="Avatar image">
+                                        <img class="lazy" src="{{ (!empty($course->user->photo)) ? url($course->user->photo) : url('upload/no_user.png')}}" data-src="images/small-avatar-1.jpg" alt="Avatar image">
                                     </a>
                                     <ul class="generic-list-item pt-3">
                                         <li><i class="la la-star mr-2 text-color-3"></i> 4.6 Instructor Rating</li>
@@ -405,7 +405,7 @@
                             @foreach ($reviews as $item)
                             <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
                                 <div class="media-img mr-4 rounded-full">
-                                    <img class="rounded-full lazy" src="{{ (!empty($item->user->photo)) ? url('upload/user_images/'.$item->user->photo) : url('upload/no_user.png')}}" data-src="images/small-avatar-1.jpg" alt="User image">
+                                    <img class="rounded-full lazy" src="{{ (!empty($item->user->photo)) ? url($item->user->photo) : url('upload/no_user.png')}}" data-src="images/small-avatar-1.jpg" alt="User image">
                                 </div>
                                 <div class="media-body">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
