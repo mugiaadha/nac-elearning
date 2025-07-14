@@ -3,7 +3,7 @@ name: Deploy Laravel to VPS
 on:
   push:
     branches:
-      - main # ganti jika cabang utama kamu berbeda
+      - main
 
 jobs:
   deploy:
@@ -45,6 +45,7 @@ jobs:
           EXCLUDE: .env
           ARGS: -avz --delete
           SCRIPT_AFTER: |
+            cd /var/www/laravel-app
             php artisan down
             php artisan migrate --force
             php artisan config:cache
@@ -52,5 +53,5 @@ jobs:
             php artisan view:cache
             php artisan storage:link
             php artisan up
-            sudo chown -R www-data:www-data /var/www/laravel-app/storage
-            sudo chown -R www-data:www-data /var/www/laravel-app/bootstrap/cache
+            chown -R www-data:www-data storage
+            chown -R www-data:www-data bootstrap/cache
