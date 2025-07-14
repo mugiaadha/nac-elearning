@@ -1,0 +1,60 @@
+name: Deploy Laravel to VPS
+
+on:
+  push:
+    branches:
+      - main # ganti jika cabang utama kamu berbeda
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, bcmath, xml, ctype, json, gd, pdo_mysql, curl, zip
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build Vite assets
+        run: npm run build
+
+      - name: Deploy to VPS via rsync
+        uses: easingthemes/ssh-deploy@v4
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_USER: your_user
+          SERVER_IP: 202.10.41.215
+          REMOTE_PORT: 22
+          TARGET: /var/www/laravel-app
+          SOURCE: .
+          EXCLUDE: |
+            .git*
+            node_modules/
+            vendor/
+
+      - name: Run migrations on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 202.10.41.215
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /var/www/laravel-app
+            php artisan migrate --force
