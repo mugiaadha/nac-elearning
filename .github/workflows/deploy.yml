@@ -43,9 +43,8 @@ jobs:
           TARGET: /var/www/laravel-app
           SOURCE: .
           ARGS: -avz --delete
-          SCRIPT_BEFORE: |
-            php artisan down
           SCRIPT_AFTER: |
+            php artisan down
             php artisan migrate --force
             php artisan config:cache
             php artisan route:cache
