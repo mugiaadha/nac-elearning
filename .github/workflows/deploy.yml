@@ -37,24 +37,16 @@ jobs:
       - name: Deploy to VPS via rsync
         uses: easingthemes/ssh-deploy@v4
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_USER: root
-          SERVER_IP: 202.10.41.215
-          REMOTE_PORT: 22
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.SERVER_IP }}
+          REMOTE_USER: ${{ secrets.SERVER_USER }}
           TARGET: /var/www/laravel-app
           SOURCE: .
-          EXCLUDE: |
-            .git*
-            node_modules/
-            vendor/
-
-      - name: Run migrations on VPS
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: 202.10.41.215
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            cd /var/www/laravel-app
+          SCRIPT_BEFORE: |
+            php artisan down
+          SCRIPT_AFTER: |
             php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan up
