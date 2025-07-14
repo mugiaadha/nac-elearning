@@ -42,6 +42,7 @@ jobs:
           REMOTE_USER: ${{ secrets.SERVER_USER }}
           TARGET: /var/www/laravel-app
           SOURCE: .
+          EXCLUDE: .env
           ARGS: -avz --delete
           SCRIPT_AFTER: |
             php artisan down
