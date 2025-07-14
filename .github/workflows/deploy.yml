@@ -18,7 +18,6 @@ jobs:
         with:
           php-version: "8.3"
           extensions: mbstring, bcmath, xml, ctype, json, gd, pdo_mysql, curl, zip
-          coverage: none
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -43,7 +42,7 @@ jobs:
           TARGET: /var/www/laravel-app
           SOURCE: .
           EXCLUDE: .env
-          ARGS: -avz --delete
+          ARGS: -avz --delete --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rw,Fg=rw,Fo=r
           SCRIPT_AFTER: |
             cd /var/www/laravel-app
             php artisan down
@@ -53,5 +52,4 @@ jobs:
             php artisan view:cache
             php artisan storage:link
             php artisan up
-            chown -R www-data:www-data storage
-            chown -R www-data:www-data bootstrap/cache
+            chown -R www-data:www-data storage bootstrap/cache
