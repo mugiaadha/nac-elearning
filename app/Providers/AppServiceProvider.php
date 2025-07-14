@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\SmtpSetting;
-use Config;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,9 +21,13 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot()
     {
-        if (\Schema::hasTable('smtp_settings')) {
+        if (App::runningInConsole()) {
+            return;
+        }
+
+        if (Schema::hasTable('smtp_settings')) {
             $smtpsetting = SmtpSetting::first();
 
             if ($smtpsetting) {
@@ -36,14 +42,9 @@ class AppServiceProvider extends ServiceProvider
                         'address' => $smtpsetting->from_address,
                         'name' => 'NAC Tax Center'
                     ]
-
                 ];
                 Config::set('mail', $data);
             }
-        } // end if
-
-
-
-
+        }
     }
 }
