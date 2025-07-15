@@ -30,36 +30,6 @@
                                             max-width: 600px;
                                             width: 100%;
                                         ">
-                                <input
-                                    type="text"
-                                    name="q"
-                                    class="form-control"
-                                    placeholder="Cari pelatihan perpajakan..."
-                                    style="
-                                                flex: 1;
-                                                padding: 12px 15px;
-                                                opacity: 70%;
-                                                border: 1px solid grey;
-                                                border-radius: 25px 25px 25px
-                                                    25px;
-                                            "
-                                    required />
-                                <button
-                                    type="submit"
-                                    style="
-                                                background-color: #0d47a1;
-                                                opacity: 70%;
-                                                color: white;
-                                                padding: 12px 25px 12px 25px;
-                                                margin: 0 15px;
-                                                border: none;
-                                                border-radius: 25px 25px 25px
-                                                    25px;
-                                                cursor: pointer;
-                                            ">
-                                    <i class="icon fa fa-search"></i>
-                                    Cari
-                                </button>
                             </form>
                         </div>
                     </div>
