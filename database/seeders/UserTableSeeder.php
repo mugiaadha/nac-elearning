@@ -15,13 +15,13 @@ class UserTableSeeder extends Seeder
     {
         DB::table('site_settings')->insert([
             [
-                'logo' => 'test',
-                'phone' => 'test',
-                'email' => 'test',
-                'address' => 'test',
-                'facebook' => 'test',
-                'twitter' => 'test',
-                'copyright' => 'test',
+                'logo' => 'storage/logo/1837683965271297.png',
+                'phone' => '085159080404',
+                'email' => 'nac@gmail.com',
+                'address' => 'Jl. Pajak No. 123, Jakarta',
+                'facebook' => 'https://facebook.com/nactaxcenter',
+                'twitter' => 'https://twitter.com/nactaxcenter',
+                'copyright' => '© 2025 NAC Tax Center. All rights reserved.',
             ],
         ]);
 

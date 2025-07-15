@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SmtpSetting;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 use App\Models\SiteSetting;
 
 class SettingController extends Controller
@@ -53,11 +54,12 @@ class SettingController extends Controller
         $site_id = $request->id;
 
         if ($request->file('logo')) {
-
             $image = $request->file('logo');
             $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            Image::make($image)->resize(140, 41)->save('upload/logo/' . $name_gen);
-            $save_url = 'upload/logo/' . $name_gen;
+            $img = Image::make($image)->resize(140, 41)->encode($image->getClientOriginalExtension());
+            // Simpan ke storage/app/public/logo/
+            Storage::disk('public')->put('logo/' . $name_gen, $img);
+            $save_url = 'storage/logo/' . $name_gen;
 
             SiteSetting::find($site_id)->update([
                 'phone' => $request->phone,
@@ -67,7 +69,6 @@ class SettingController extends Controller
                 'twitter' => $request->twitter,
                 'copyright' => $request->copyright,
                 'logo' => $save_url,
-
             ]);
 
             $notification = array(
