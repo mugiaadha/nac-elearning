@@ -43,7 +43,7 @@ jobs:
           SOURCE: .
           EXCLUDE: |
             .env
-            storage
+            storage/app/public
           ARGS: -avz --delete --chown=www-data:www-data
           SCRIPT_AFTER: |
             cd /var/www/laravel-app
