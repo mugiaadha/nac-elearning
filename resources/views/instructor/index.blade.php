@@ -8,7 +8,6 @@ $status = $instructorId->status;
 @endphp
 
 <div class="page-content">
-
   @if ($status === '1')
   <h4>Instructor Account Is <span class="text-success">Active</span> </h4>
   @else
