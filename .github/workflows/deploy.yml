@@ -41,9 +41,7 @@ jobs:
           REMOTE_USER: ${{ secrets.SERVER_USER }}
           TARGET: /var/www/laravel-app
           SOURCE: .
-          EXCLUDE: |
-            .env
-            storage/app/public
+          EXCLUDE: .env, storage
           ARGS: -avz --delete --chown=www-data:www-data
           SCRIPT_AFTER: |
             cd /var/www/laravel-app
