@@ -42,7 +42,7 @@ jobs:
           TARGET: /var/www/laravel-app
           SOURCE: .
           EXCLUDE: .env
-          ARGS: -avz --delete
+          ARGS: -avz --delete --chown=www-data:www-data
           SCRIPT_AFTER: |
             cd /var/www/laravel-app
             php artisan down
@@ -52,5 +52,5 @@ jobs:
             php artisan view:cache
             php artisan storage:link
             php artisan up
-            sudo chown -R www-data:www-data storage bootstrap/cache
-            sudo chmod -R ug+rwX storage bootstrap/cache
+            chown -R www-data:www-data storage bootstrap/cache
+            chmod -R ug+rwX storage bootstrap/cache
