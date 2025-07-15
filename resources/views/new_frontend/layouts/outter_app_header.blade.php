@@ -50,7 +50,7 @@ $setting = App\Models\SiteSetting::find(1);
                         <li class="scroll-to-section">
                             <a href="#top" class="active">Beranda</a>
                         </li>
-                        <li><a href="layanan.html">Layanan</a></li>
+                        <li><a href="#layanan">Layanan</a></li>
                         <li class="scroll-to-section">
                             <a href="#konsultasi">Konsultasi</a>
                         </li>
@@ -58,9 +58,9 @@ $setting = App\Models\SiteSetting::find(1);
                             <a href="javascript:void(0)">Tentang Kami</a>
                             <ul class="sub-menu">
                                 <li>
-                                    <a href="profil.html">Profil NAC</a>
+                                    <a href="#profil">Profil NAC</a>
                                 </li>
-                                <li><a href="tim.html">Tim Kami</a></li>
+                                <li><a href="#tim">Tim Kami</a></li>
                             </ul>
                         </li>
                         <li class="scroll-to-section">
