@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -18,7 +20,9 @@ class UserController extends Controller
 
     public function home()
     {
-        return view('new_frontend.home');
+        $categories = Category::latest()->limit(5)->get();
+        $courses = Course::where('status', 1)->orderBy('id', 'DESC')->limit(5)->get();
+        return view('new_frontend.home', compact('categories', 'courses'));
     }
 
     public function UserProfile()

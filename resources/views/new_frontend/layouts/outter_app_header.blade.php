@@ -48,26 +48,29 @@ $setting = App\Models\SiteSetting::find(1);
                     <!-- ***** Menu Start ***** -->
                     <ul class="nav">
                         <li class="scroll-to-section">
-                            <a href="#top" class="active">Beranda</a>
+                            <a href="#top" class="active fs-7">Beranda</a>
                         </li>
-                        <li><a href="layanan.html">Layanan</a></li>
+                        <li><a href="layanan.html" class="fs-7">Layanan</a></li>
                         <li class="scroll-to-section">
-                            <a href="#konsultasi">Konsultasi</a>
+                            <a href="#konsultasi" class="fs-7">Konsultasi</a>
                         </li>
                         <li class="has-sub">
-                            <a href="javascript:void(0)">Tentang Kami</a>
+                            <a href="javascript:void(0)" class="fs-7">Tentang Kami</a>
                             <ul class="sub-menu">
                                 <li>
-                                    <a href="profil.html">Profil NAC</a>
+                                    <a href="profil.html" class="fs-7">Profil NAC</a>
                                 </li>
-                                <li><a href="tim.html">Tim Kami</a></li>
+                                <li><a href="tim.html" class="fs-7">Tim Kami</a></li>
                             </ul>
                         </li>
                         <li class="scroll-to-section">
-                            <a href="#edukasi">Edukasi Pajak</a>
+                            <a href="#edukasi" class="fs-7">Edukasi Pajak</a>
                         </li>
                         <li class="scroll-to-section">
-                            <a href="#kontak">Kontak</a>
+                            <a href="#kontak" class="fs-7">Kontak</a>
+                        </li>
+                        <li class="scroll-to-section">
+                            <a href="{{ route('login') }}" class="fs-7">Login</a>
                         </li>
                     </ul>
                     <a class="menu-trigger">
