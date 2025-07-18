@@ -699,7 +699,7 @@ section.heading-page h2 {
     width: 100%;
 }
 .services .item {
-    background-image: url(../images/service-item-bg.png);
+    background-image: url(../images/service-item-bg.webp);
     text-align: center;
     color: #fff;
 }
