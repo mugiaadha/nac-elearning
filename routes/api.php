@@ -22,5 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Site Settings API Routes
 Route::prefix('site-settings')->group(function () {
     Route::get('/', [SiteSettingController::class, 'index']);
-    Route::delete('/cache', [SiteSettingController::class, 'clearSiteSettingsCache']);
+    Route::delete('/clear-cache', [SiteSettingController::class, 'clearSiteSettingsCache']);
 });

@@ -17,25 +17,18 @@ class SiteSettingController extends BaseController
     public function index()
     {
         $cacheKey = $this->generateCacheKey('site_settings_all');
-        
+
         return $this->cacheOrExecute(
             $cacheKey,
             function () {
                 $setting = SiteSetting::select([
-                    'title',
-                    'description',
-                    'keywords',
                     'logo',
-                    'favicon',
-                    'email',
                     'phone',
+                    'email',
                     'address',
                     'facebook',
                     'twitter',
-                    'linkedin',
-                    'instagram',
-                    'youtube',
-                    'whatsapp'
+                    'copyright'
                 ])->first();
 
                 if (!$setting) {
@@ -60,7 +53,7 @@ class SiteSettingController extends BaseController
         try {
             // Clear by tags if supported
             $cleared = $this->clearCacheByTags(['site_settings']);
-            
+
             // Clear specific key as fallback
             $cacheKey = $this->generateCacheKey('site_settings_all');
             $keyCleared = $this->clearCache($cacheKey);
@@ -69,7 +62,6 @@ class SiteSettingController extends BaseController
                 'tags_cleared' => $cleared,
                 'key_cleared' => $keyCleared
             ], 'Cache berhasil dibersihkan');
-
         } catch (Exception $e) {
             return $this->handleException($e, 'Clearing site settings cache');
         }

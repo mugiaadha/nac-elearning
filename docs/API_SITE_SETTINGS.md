@@ -15,20 +15,13 @@
 {
     "success": true,
     "data": {
-        "title": "NAC E-Learning",
-        "description": "Platform pembelajaran online",
-        "keywords": "elearning, education, online",
         "logo": "path/to/logo.png",
-        "favicon": "path/to/favicon.ico",
-        "email": "info@nac.com",
         "phone": "+6281234567890",
+        "email": "info@nac.com",
         "address": "Jakarta, Indonesia",
         "facebook": "https://facebook.com/nac",
         "twitter": "https://twitter.com/nac",
-        "linkedin": "https://linkedin.com/company/nac",
-        "instagram": "https://instagram.com/nac",
-        "youtube": "https://youtube.com/nac",
-        "whatsapp": "+6281234567890"
+        "copyright": "© 2025 NAC E-Learning. All rights reserved."
     },
     "message": "Data pengaturan situs berhasil diambil"
 }
