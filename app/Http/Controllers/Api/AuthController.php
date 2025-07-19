@@ -37,7 +37,7 @@ class AuthController extends BaseController
 
             if (Auth::attempt($credentials)) {
                 $user = Auth::user();
-                
+
                 // Generate simple token for API usage
                 $tokenExpiry = $request->remember_me ? now()->addDays(30) : now()->addHours(24);
                 $token = 'token_' . $user->id . '_' . md5($user->email . time());
@@ -47,7 +47,7 @@ class AuthController extends BaseController
                 session(['user_email' => $user->email]);
                 session(['user_name' => $user->name]);
                 session(['api_token' => $token]);
-                
+
                 // Create shared session data
                 $sessionData = [
                     'user_id' => $user->id,
@@ -62,7 +62,7 @@ class AuthController extends BaseController
                 // Store in cache for cross-platform access
                 $cacheKey = "user_session_{$user->id}";
                 cache([$cacheKey => $sessionData], $tokenExpiry);
-                
+
                 // Also store token mapping
                 cache(["api_token_{$token}" => $user->id], $tokenExpiry);
 
@@ -78,11 +78,9 @@ class AuthController extends BaseController
                     ],
                     'session_key' => $cacheKey // For cross-platform session access
                 ], 'Login berhasil');
-
             } else {
                 return $this->sendError('Email atau password salah', [], 401);
             }
-
         } catch (Exception $e) {
             return $this->handleException($e, 'User login');
         }
@@ -99,24 +97,23 @@ class AuthController extends BaseController
         try {
             // Get user from token or session
             $user = $this->getUserFromRequest($request);
-            
+
             if ($user) {
                 // Clear cache session
                 $cacheKey = "user_session_{$user->id}";
                 cache()->forget($cacheKey);
-                
+
                 // Clear token mapping
                 $token = $request->bearerToken() ?? session('api_token');
                 if ($token) {
                     cache()->forget("api_token_{$token}");
                 }
-                
+
                 // Clear Laravel session
                 session()->flush();
             }
 
             return $this->sendResponse([], 'Logout berhasil');
-
         } catch (Exception $e) {
             return $this->handleException($e, 'User logout');
         }
@@ -158,7 +155,7 @@ class AuthController extends BaseController
     {
         try {
             $user = $this->getUserFromRequest($request);
-            
+
             if (!$user) {
                 return $this->sendError('User tidak ditemukan', [], 401);
             }
@@ -183,7 +180,6 @@ class AuthController extends BaseController
                 'created_at' => $user->created_at,
                 'session_key' => $cacheKey
             ], 'User data berhasil diambil');
-
         } catch (Exception $e) {
             return $this->handleException($e, 'Getting user data');
         }
@@ -217,7 +213,6 @@ class AuthController extends BaseController
             }
 
             return $this->sendResponse($sessionData, 'Session masih aktif');
-
         } catch (Exception $e) {
             return $this->handleException($e, 'Checking session');
         }
@@ -233,7 +228,7 @@ class AuthController extends BaseController
     {
         try {
             $user = $this->getUserFromRequest($request);
-            
+
             if (!$user) {
                 return $this->sendError('User tidak ditemukan', [], 401);
             }
@@ -260,7 +255,7 @@ class AuthController extends BaseController
                 'expires_at' => $tokenExpiry->toDateTimeString()
             ];
             cache([$cacheKey => $sessionData], $tokenExpiry);
-            
+
             // Store new token mapping
             cache(["api_token_{$newToken}" => $user->id], $tokenExpiry);
 
@@ -270,7 +265,6 @@ class AuthController extends BaseController
                 'expires_at' => $tokenExpiry->toDateTimeString(),
                 'session_key' => $cacheKey
             ], 'Token berhasil direfresh');
-
         } catch (Exception $e) {
             return $this->handleException($e, 'Refreshing token');
         }
@@ -286,20 +280,20 @@ class AuthController extends BaseController
     {
         try {
             $token = $request->input('token') ?? $request->bearerToken();
-            
+
             if (!$token) {
                 return $this->sendError('Token diperlukan', [], 400);
             }
 
             // Check if token exists in cache
             $userId = cache("api_token_{$token}");
-            
+
             if (!$userId) {
                 return $this->sendError('Token tidak valid atau sudah expired', [], 401);
             }
 
             $user = User::find($userId);
-            
+
             if (!$user) {
                 // Clean up invalid token
                 cache()->forget("api_token_{$token}");
@@ -309,7 +303,7 @@ class AuthController extends BaseController
             // Check session data for expiry
             $sessionKey = "user_session_{$userId}";
             $sessionData = cache($sessionKey);
-            
+
             if (!$sessionData) {
                 // Session expired, clean up token
                 cache()->forget("api_token_{$token}");
@@ -326,7 +320,6 @@ class AuthController extends BaseController
                 ],
                 'expires_at' => $sessionData['expires_at'] ?? null
             ], 'Token valid');
-
         } catch (Exception $e) {
             return $this->handleException($e, 'Validating token');
         }
