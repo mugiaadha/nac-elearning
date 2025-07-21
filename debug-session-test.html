@@ -19,6 +19,10 @@
     <div class="container">
         <h1>🔧 Debug Session Key Login</h1>
         
+        <h2>Step 0: Test Server Status</h2>
+        <button onclick="testServer()">🌐 Test Server Connection</button>
+        <div id="serverResult" class="result" style="display: none;"></div>
+        
         <h2>Step 1: Login untuk Generate Session Key</h2>
         <div class="form-group">
             <label>Email:</label>
@@ -46,6 +50,53 @@
     <script>
         const BASE_URL = 'http://202.10.41.215';
         
+        async function testServer() {
+            const resultDiv = document.getElementById('serverResult');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ Testing server connection...';
+            resultDiv.className = 'result';
+            
+            try {
+                // Test basic server response
+                const response = await fetch(`${BASE_URL}`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Server Online!</h3>
+                        <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        <p><strong>Server:</strong> ${BASE_URL}</p>
+                        <p><strong>Ready:</strong> Siap untuk test API</p>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <h3>⚠️ Server Response Issue</h3>
+                        <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        <p><strong>Server:</strong> ${BASE_URL}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Server Tidak Bisa Diakses!</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Server:</strong> ${BASE_URL}</p>
+                    <p><strong>Possible Issues:</strong></p>
+                    <ul>
+                        <li>Server tidak running</li>
+                        <li>CORS policy blocking</li>
+                        <li>Firewall atau network issue</li>
+                        <li>IP/Port salah</li>
+                    </ul>
+                `;
+            }
+        }
+        
         async function testLogin() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -56,11 +107,16 @@
             resultDiv.className = 'result';
             
             try {
+                console.log('Attempting login to:', `${BASE_URL}/api/auth/login`);
+                
                 const response = await fetch(`${BASE_URL}/api/auth/login`, {
                     method: 'POST',
+                    mode: 'cors', // Explicitly set CORS mode
+                    credentials: 'include', // Include credentials
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         email: email,
@@ -68,7 +124,15 @@
                     })
                 });
                 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
+                console.log('Response data:', data);
                 
                 if (data.success) {
                     resultDiv.className = 'result success';
@@ -91,11 +155,35 @@
                     `;
                 }
             } catch (error) {
+                console.error('Login error:', error);
+                
                 resultDiv.className = 'result error';
-                resultDiv.innerHTML = `
-                    <h3>❌ Network Error!</h3>
-                    <p><strong>Error:</strong> ${error.message}</p>
-                `;
+                
+                // Detect specific error types
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    resultDiv.innerHTML = `
+                        <h3>❌ CORS atau Network Error!</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Possible Causes:</strong></p>
+                        <ul>
+                            <li>CORS policy blocking request</li>
+                            <li>Server tidak running di ${BASE_URL}</li>
+                            <li>API endpoint tidak tersedia</li>
+                        </ul>
+                        <p><strong>Solutions:</strong></p>
+                        <ul>
+                            <li>Pastikan Laravel server running</li>
+                            <li>Check CORS configuration</li>
+                            <li>Test dengan Postman dulu</li>
+                        </ul>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3>❌ Network Error!</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Type:</strong> ${error.name}</p>
+                    `;
+                }
             }
         }
         
