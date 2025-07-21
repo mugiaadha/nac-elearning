@@ -53,7 +53,6 @@ Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
     return response()->json(['message' => 'Logged out']);
 });
 
-
 Route::post('/session-login', function (Request $request) {
     $credentials = $request->only('email', 'password');
     if (Auth::attempt($credentials)) {
