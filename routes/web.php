@@ -387,3 +387,5 @@ Route::get('/user-message/{id}', [ChatController::class, 'UserMsgById']);
 Route::get('/instructor/live/chat', [ChatController::class, 'LiveChat'])->name('instructor.live.chat');
 
 ///// End Route Accessable for All 
+
+require __DIR__ . '/fe-route.php';
