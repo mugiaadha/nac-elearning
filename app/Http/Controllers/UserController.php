@@ -27,6 +27,7 @@ class UserController extends Controller
 
     public function UserProfile()
     {
+
         $id = Auth::user()->id;
         $profileData = User::find($id);
         return view('frontend.dashboard.edit_profile', compact('profileData'));
