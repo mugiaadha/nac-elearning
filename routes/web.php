@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\UserController;
@@ -39,9 +40,48 @@ use App\Http\Controllers\Backend\ChatController;
 Route::get('/', [UserController::class, 'Index'])->name('index');
 Route::get('/v2', [UserController::class, 'home'])->name('home');
 
-Route::get('/dashboard', function () {
+///// Dashboard Route dengan cross-platform support dan auto-redirect
+Route::get('/dashboard', function (Request $request) {
+    // Jika user sudah login, redirect ke dashboard sesuai role
+    if (auth()->check()) {
+        $user = auth()->user();
+        $role = $user->role ?? 'user';
+        
+        switch (strtolower($role)) {
+            case 'admin':
+                return redirect('/admin/dashboard');
+            case 'instructor':
+                return redirect('/instructor/dashboard');
+            case 'user':
+            default:
+                return redirect('/user/dashboard');
+        }
+    }
+    
+    // Jika tidak login, akan di-handle oleh middleware cross.auth
     return view('frontend.dashboard.index');
-})->middleware(['auth', 'roles:user', 'verified'])->name('dashboard');
+})->middleware(['cross.auth'])->name('dashboard');
+
+// Alternative dashboard route untuk cross-platform access
+Route::get('/dashboard-api', function () {
+    $user = auth()->user();
+    if ($user) {
+        return view('frontend.dashboard.index', compact('user'));
+    }
+    return redirect('/login')->with('error', 'Please login first');
+})->middleware(['cross.auth']);
+
+///// Cross-Platform Routes dengan session_key support
+Route::middleware(['cross.auth'])->group(function () {
+    // User dashboard accessible via session_key
+    Route::get('/user/dashboard', function () {
+        $user = auth()->user();
+        if ($user) {
+            return view('frontend.dashboard.index', compact('user'));
+        }
+        return redirect('/login')->with('error', 'Authentication required');
+    });
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/user/profile', [UserController::class, 'UserProfile'])->name('user.profile');
@@ -81,6 +121,11 @@ require __DIR__ . '/auth.php';
 ///// Admin Group Middleware 
 Route::middleware(['auth', 'roles:admin'])->group(function () {
 
+    // Admin base route - redirect to dashboard
+    Route::get('/admin', function () {
+        return redirect()->route('admin.dashboard');
+    })->name('admin');
+    
     Route::get('/admin/dashboard', [AdminController::class, 'AdminDashboard'])->name('admin.dashboard');
 
     Route::get('/admin/logout', [AdminController::class, 'AdminLogout'])->name('admin.logout');
@@ -248,11 +293,50 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     });
 }); // End Admin Group Middleware 
 
+///// Cross-Platform Admin Routes (untuk frontend integration)
+Route::middleware(['cross.auth'])->group(function () {
+    Route::get('/admin', function () {
+        // Check if user has admin role
+        if (auth()->user() && auth()->user()->role === 'admin') {
+            return redirect('/admin/dashboard');
+        }
+        return redirect('/login')->with('error', 'Access denied');
+    });
+    
+    Route::get('/admin/dashboard', function () {
+        if (auth()->user() && auth()->user()->role === 'admin') {
+            return app(AdminController::class)->AdminDashboard();
+        }
+        return redirect('/login')->with('error', 'Access denied');
+    });
+});
 
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login')->middleware(RedirectIfAuthenticated::class);
 
 Route::get('/become/instructor', [AdminController::class, 'BecomeInstructor'])->name('become.instructor');
 Route::post('/instructor/register', [AdminController::class, 'InstructorRegister'])->name('instructor.register');
+
+// Debug route untuk check session key
+Route::get('/debug-session/{key}', function ($key) {
+    $sessionData = cache($key);
+    
+    if ($sessionData) {
+        return response()->json([
+            'found' => true,
+            'session_key' => $key,
+            'data' => $sessionData,
+            'cache_driver' => config('cache.default'),
+            'expires_in' => 'Available'
+        ]);
+    } else {
+        return response()->json([
+            'found' => false,
+            'session_key' => $key,
+            'message' => 'Session not found or expired',
+            'cache_driver' => config('cache.default')
+        ]);
+    }
+});
 
 
 ///// Instructor Group Middleware

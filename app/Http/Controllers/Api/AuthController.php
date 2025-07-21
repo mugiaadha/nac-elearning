@@ -15,6 +15,24 @@ use Exception;
 class AuthController extends BaseController
 {
     /**
+     * Generate unique session key for user
+     *
+     * @param User $user
+     * @param string $token
+     * @return string
+     */
+    private function generateSessionKey($user, $token = null)
+    {
+        // Option 1: Simple format (current)
+        // return "user_session_{$user->id}";
+        
+        // Option 2: More secure format
+        $timestamp = time();
+        $hash = md5($user->email . $timestamp . ($token ?? ''));
+        return "session_{$user->id}_{$hash}";
+    }
+
+    /**
      * Login user and create session
      *
      * @param Request $request
@@ -59,9 +77,9 @@ class AuthController extends BaseController
                     'expires_at' => $tokenExpiry->toDateTimeString()
                 ];
 
-                // Store in cache for cross-platform access
-                $cacheKey = "user_session_{$user->id}";
-                cache([$cacheKey => $sessionData], $tokenExpiry);
+                // Generate unique session key
+                $sessionKey = $this->generateSessionKey($user, $token);
+                cache([$sessionKey => $sessionData], $tokenExpiry);
 
                 // Also store token mapping
                 cache(["api_token_{$token}" => $user->id], $tokenExpiry);
@@ -76,7 +94,7 @@ class AuthController extends BaseController
                         'email' => $user->email,
                         'role' => $user->role ?? 'user'
                     ],
-                    'session_key' => $cacheKey // For cross-platform session access
+                    'session_key' => $sessionKey // For cross-platform session access
                 ], 'Login berhasil');
             } else {
                 return $this->sendError('Email atau password salah', [], 401);
