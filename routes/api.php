@@ -18,17 +18,13 @@ use Illuminate\Support\Facades\Hash;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 // Site Settings API Routes
 Route::prefix('site-settings')->group(function () {
     Route::get('/', [SiteSettingController::class, 'index']);
     Route::delete('/clear-cache', [SiteSettingController::class, 'clearSiteSettingsCache']);
 });
 
-
+// Authentication Routes
 Route::post('/login', function (Request $request) {
     $user = User::where('email', $request->email)->first();
 
@@ -44,19 +40,22 @@ Route::post('/login', function (Request $request) {
     ]);
 });
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
-    $request->user()->currentAccessToken()->delete();
-    return response()->json(['message' => 'Logged out']);
-});
-
 Route::post('/session-login', function (Request $request) {
     $credentials = $request->only('email', 'password');
     if (Auth::attempt($credentials)) {
         return response()->json(['message' => 'Login success']);
     }
     return response()->json(['message' => 'Invalid credentials'], 401);
+});
+
+// Protected Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    
+    Route::post('/logout', function (Request $request) {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Logged out']);
+    });
 });
