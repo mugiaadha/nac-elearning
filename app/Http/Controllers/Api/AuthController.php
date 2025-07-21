@@ -79,7 +79,25 @@ class AuthController extends BaseController
 
                 // Generate unique session key
                 $sessionKey = $this->generateSessionKey($user, $token);
+                
+                // Debug logging
+                Log::info('AuthController: Storing session to cache', [
+                    'session_key' => $sessionKey,
+                    'user_id' => $user->id,
+                    'cache_driver' => config('cache.default'),
+                    'expires_at' => $tokenExpiry->toDateTimeString(),
+                    'data' => $sessionData
+                ]);
+                
                 cache([$sessionKey => $sessionData], $tokenExpiry);
+                
+                // Verify cache storage immediately
+                $verifyCache = cache($sessionKey);
+                Log::info('AuthController: Cache verification', [
+                    'session_key' => $sessionKey,
+                    'stored_successfully' => $verifyCache ? 'YES' : 'NO',
+                    'retrieved_data' => $verifyCache
+                ]);
 
                 // Also store token mapping
                 cache(["api_token_{$token}" => $user->id], $tokenExpiry);

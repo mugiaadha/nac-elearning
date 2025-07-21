@@ -15,7 +15,15 @@ class CrossPlatformAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Check for API token first (for frontend)
+        // Check Laravel default auth FIRST (untuk user yang login normal)
+        if (auth()->check()) {
+            // User sudah login via Laravel auth biasa
+            $user = auth()->user();
+            Log::info('CrossPlatformAuth: User already authenticated via Laravel auth', ['user_id' => $user->id]);
+            return $next($request);
+        }
+        
+        // Check for API token (for frontend)
         $token = $request->bearerToken() ?? $request->input('token');
         
         if ($token) {
@@ -74,14 +82,13 @@ class CrossPlatformAuth
                     
                     Log::info('CrossPlatformAuth: User authenticated successfully', ['user_id' => $user->id]);
                     
-                    // Jika akses via session_key parameter di URL, redirect ke dashboard bersih
+                    // Jika akses via session_key parameter di URL, set flag untuk auto-redirect
                     if ($request->has('session_key')) {
-                        Log::info('CrossPlatformAuth: Auto-redirecting to dashboard', ['from' => $request->fullUrl()]);
+                        Log::info('CrossPlatformAuth: Session key authentication successful, setting redirect flag', ['from' => $request->fullUrl()]);
                         
-                        // Tentukan dashboard berdasarkan role user
-                        $dashboardUrl = $this->getDashboardUrl($user);
-                        
-                        return redirect()->to($dashboardUrl);
+                        // Set attribute untuk route bisa detect bahwa ini dari session_key
+                        $request->attributes->set('authenticated_via_session_key', true);
+                        $request->attributes->set('should_redirect_dashboard', true);
                     }
                     
                     return $next($request);
@@ -91,10 +98,18 @@ class CrossPlatformAuth
             }
         }
         
-        return response()->json([
-            'success' => false,
-            'message' => 'Unauthorized'
-        ], 401);
+        // Jika semua authentication method gagal
+        // Check apakah request ini dari browser (expect HTML) atau API (expect JSON)
+        if ($request->expectsJson() || $request->is('api/*')) {
+            // Request dari API atau AJAX - return JSON response
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        } else {
+            // Request dari browser biasa - redirect ke login
+            return redirect()->route('login')->with('error', 'Please login to access this page');
+        }
     }
     
     /**

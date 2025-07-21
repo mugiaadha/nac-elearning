@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\UserController;
@@ -40,13 +41,30 @@ use App\Http\Controllers\Backend\ChatController;
 Route::get('/', [UserController::class, 'Index'])->name('index');
 Route::get('/v2', [UserController::class, 'home'])->name('home');
 
-///// Dashboard Route dengan cross-platform support dan auto-redirect
+///// Dashboard Route dengan smart authentication
 Route::get('/dashboard', function (Request $request) {
-    // Jika user sudah login, redirect ke dashboard sesuai role
+    // Cek apakah user sudah di-authenticate (baik via Laravel auth atau session_key)
     if (auth()->check()) {
         $user = auth()->user();
         $role = $user->role ?? 'user';
         
+        // Jika authentication via session_key dan perlu redirect, buat URL bersih
+        if ($request->has('session_key') && $request->attributes->get('authenticated_via_session_key')) {
+            Log::info('Dashboard: Redirecting after session_key authentication', ['user_id' => $user->id, 'role' => $role]);
+            
+            switch (strtolower($role)) {
+                case 'admin':
+                    return redirect('/admin/dashboard');
+                case 'instructor':
+                    return redirect('/instructor/dashboard');
+                case 'user':
+                default:
+                    // User biasa redirect ke /dashboard tanpa session_key
+                    return redirect('/dashboard');
+            }
+        }
+        
+        // Authentication normal atau sudah di /dashboard tanpa session_key
         switch (strtolower($role)) {
             case 'admin':
                 return redirect('/admin/dashboard');
@@ -59,8 +77,8 @@ Route::get('/dashboard', function (Request $request) {
         }
     }
     
-    // Jika tidak login, akan di-handle oleh middleware cross.auth
-    return view('frontend.dashboard.index');
+    // Jika tidak login dan tidak ada session_key, redirect ke login
+    return redirect()->route('login')->with('error', 'Please login to access dashboard');
 })->middleware(['cross.auth'])->name('dashboard');
 
 // Alternative dashboard route untuk cross-platform access
@@ -304,12 +322,8 @@ Route::middleware(['cross.auth'])->group(function () {
         return redirect('/login')->with('error', 'Access denied');
     });
     
-    Route::get('/admin/dashboard', function () {
-        if (auth()->user() && auth()->user()->role === 'admin') {
-            return app(AdminController::class)->AdminDashboard();
-        }
-        return redirect('/login')->with('error', 'Access denied');
-    });
+    // Note: /admin/dashboard sudah ada di Admin Group Middleware di atas dengan name 'admin.dashboard'
+    // Tidak perlu duplicate route di sini
 });
 
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login')->middleware(RedirectIfAuthenticated::class);
