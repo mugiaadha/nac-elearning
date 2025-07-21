@@ -137,6 +137,9 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
+// Debug routes for development
+require __DIR__ . '/debug.php';
+
 ///// Admin Group Middleware 
 Route::middleware(['auth', 'roles:admin'])->group(function () {
 
