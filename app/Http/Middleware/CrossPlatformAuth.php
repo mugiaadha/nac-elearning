@@ -112,7 +112,8 @@ class CrossPlatformAuth
                 return '/instructor/dashboard';
             case 'user':
             default:
-                return '/user/dashboard';
+                // User biasa redirect ke /dashboard
+                return '/dashboard';
         }
     }
 }

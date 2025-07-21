@@ -54,7 +54,8 @@ Route::get('/dashboard', function (Request $request) {
                 return redirect('/instructor/dashboard');
             case 'user':
             default:
-                return redirect('/user/dashboard');
+                // User biasa tetap di /dashboard
+                return view('frontend.dashboard.index');
         }
     }
     
