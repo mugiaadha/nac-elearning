@@ -52,5 +52,9 @@ jobs:
             php artisan view:cache
             php artisan storage:link
             php artisan optimize
+            php artisan db:optimize --check
+            php artisan db:optimize --analyze
+            php artisan db:optimize --indexes
+            php artisan db:optimize --foreign-keys
             php artisan clear-compiled
             php artisan up
