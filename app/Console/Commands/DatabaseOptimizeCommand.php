@@ -96,7 +96,8 @@ class DatabaseOptimizeCommand extends Command
         $tables = [
             'users', 'courses', 'orders', 'payments', 'reviews', 
             'questions', 'coupons', 'wishlists', 'course_lectures',
-            'course_sections', 'chat_messages'
+            'course_sections', 'chat_messages', 'site_settings',
+            'categories', 'sub_categories', 'blog_posts', 'blog_categories'
         ];
 
         $headers = ['Table', 'Indexes', 'Foreign Keys', 'Status'];
@@ -141,6 +142,8 @@ class DatabaseOptimizeCommand extends Command
             'Featured Courses' => "SELECT COUNT(*) FROM courses WHERE status = 1 AND featured = '1'",
             'User Orders' => "SELECT COUNT(*) FROM orders WHERE user_id = 1",
             'Course Reviews' => "SELECT COUNT(*) FROM reviews WHERE course_id = 1 AND status = 'active'",
+            'Site Settings' => "SELECT * FROM site_settings WHERE is_active = 1 LIMIT 1",
+            'Active Users' => "SELECT COUNT(*) FROM users WHERE status = '1'",
         ];
 
         $headers = ['Query', 'Execution Time (ms)', 'Status'];
@@ -172,7 +175,7 @@ class DatabaseOptimizeCommand extends Command
         $this->info('📋 Database Indexes Overview');
         $this->newLine();
 
-        $tables = ['users', 'courses', 'orders', 'reviews', 'wishlists'];
+        $tables = ['users', 'courses', 'orders', 'reviews', 'wishlists', 'site_settings'];
         
         foreach ($tables as $table) {
             if (Schema::hasTable($table)) {
@@ -239,6 +242,10 @@ class DatabaseOptimizeCommand extends Command
                     '--path' => 'database/migrations/2025_01_22_000001_optimize_database_structure.php'
                 ]);
                 
+                $this->call('migrate', [
+                    '--path' => 'database/migrations/2025_01_22_000002_optimize_site_settings_table.php'
+                ]);
+                
                 $this->info('✅ Optimization migrations completed successfully!');
                 
             } catch (\Exception $e) {
@@ -293,7 +300,8 @@ class DatabaseOptimizeCommand extends Command
 
         $migrations = [
             '2025_01_22_000000_optimize_database_indexes_and_foreign_keys',
-            '2025_01_22_000001_optimize_database_structure'
+            '2025_01_22_000001_optimize_database_structure',
+            '2025_01_22_000002_optimize_site_settings_table'
         ];
 
         foreach ($migrations as $migration) {

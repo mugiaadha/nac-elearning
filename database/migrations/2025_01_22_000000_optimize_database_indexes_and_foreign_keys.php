@@ -170,6 +170,14 @@ return new class extends Migration
             $table->index('category_id');
             $table->index('subcategory_slug');
         });
+
+        // Add indexes to site_settings table for better performance
+        Schema::table('site_settings', function (Blueprint $table) {
+            $table->index('email');
+            $table->index('phone');
+            $table->index('created_at');
+            $table->index('updated_at');
+        });
     }
 
     /**
@@ -187,6 +195,13 @@ return new class extends Migration
 
         Schema::table('categories', function (Blueprint $table) {
             $table->dropIndex(['category_slug']);
+        });
+
+        Schema::table('site_settings', function (Blueprint $table) {
+            $table->dropIndex(['email']);
+            $table->dropIndex(['phone']);
+            $table->dropIndex(['created_at']);
+            $table->dropIndex(['updated_at']);
         });
 
         Schema::table('chat_messages', function (Blueprint $table) {

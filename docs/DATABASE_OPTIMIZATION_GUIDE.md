@@ -58,15 +58,16 @@ Panduan ini menjelaskan optimasi database yang telah dibuat untuk meningkatkan p
 - Menambahkan indexes untuk performa query
 - Menambahkan composite indexes untuk query yang kompleks
 
-### 2. Database Structure Optimization
+### 3. Site Settings Table Optimization
 ```bash
-2025_01_22_000001_optimize_database_structure.php
+2025_01_22_000002_optimize_site_settings_table.php
 ```
 **Fungsi:**
-- Optimasi data types untuk efisiensi storage
-- Menambahkan full-text search indexes
-- Menambahkan soft deletes
-- Menambahkan kolom tambahan untuk fitur baru
+- Optimasi data types untuk site settings
+- Menambahkan kolom social media baru (Instagram, LinkedIn, YouTube)
+- Menambahkan meta SEO fields
+- Menambahkan indexes untuk performance
+- Menambahkan is_active flag dengan unique constraint
 
 ## Cara Menjalankan Optimasi
 
