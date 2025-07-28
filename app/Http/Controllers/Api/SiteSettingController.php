@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
 use App\Models\SiteSetting;
-use Illuminate\Http\Request;
 use Exception;
 
 class SiteSettingController extends BaseController
@@ -33,6 +32,11 @@ class SiteSettingController extends BaseController
 
                 if (!$setting) {
                     throw new Exception('Data pengaturan situs tidak ditemukan');
+                }
+
+                // Tambahkan base URL pada logo jika ada
+                if ($setting->logo) {
+                    $setting->logo = url('storage/' . ltrim($setting->logo, '/'));
                 }
 
                 return $setting;
