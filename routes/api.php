@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\AuthController;
 // Site Settings API Routes
 Route::prefix('site-settings')->group(function () {
     Route::get('/', [SiteSettingController::class, 'index']);
+    Route::delete('/clear-all-cache', [SiteSettingController::class, 'clearAllCache']);
     Route::delete('/clear-cache', [SiteSettingController::class, 'clearSiteSettingsCache']);
 });
 

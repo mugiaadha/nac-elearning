@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\BaseController;
 use App\Models\SiteSetting;
 use Exception;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class SiteSettingController extends BaseController
 {
@@ -68,6 +70,17 @@ class SiteSettingController extends BaseController
             ], 'Cache berhasil dibersihkan');
         } catch (Exception $e) {
             return $this->handleException($e, 'Clearing site settings cache');
+        }
+    }
+
+    protected function clearAllCache()
+    {
+        try {
+            Artisan::call('cache:clear');
+            return true;
+        } catch (Exception $e) {
+            Log::error('Global cache clear failed: ' . $e->getMessage());
+            return false;
         }
     }
 }
