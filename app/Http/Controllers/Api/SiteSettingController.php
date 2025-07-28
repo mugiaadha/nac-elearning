@@ -38,7 +38,7 @@ class SiteSettingController extends BaseController
 
                 // Tambahkan base URL pada logo jika ada
                 if ($setting->logo) {
-                    $setting->logo = url('storage/' . ltrim($setting->logo, '/'));
+                    $setting->logo = url(ltrim($setting->logo, '/'));
                 }
 
                 return $setting;
