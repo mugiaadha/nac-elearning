@@ -45,6 +45,8 @@ jobs:
           ARGS: -avz --delete --chown=www-data:www-data
           SCRIPT_AFTER: |
             cd /var/www/laravel-app
+            mkdir -p public/backend
+            mv public/* public/backend/
             php artisan down
             php artisan migrate --force
             php artisan config:cache
