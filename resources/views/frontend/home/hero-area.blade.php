@@ -6,7 +6,7 @@
                 <div class="hero-content">
                     <div class="section-heading">
                         <h2 class="section__title text-white fs-65 lh-80 pb-3">
-                            Belajar Pajaka <br> dengan Praktis & Terarah
+                            Belajar Pajak <br> dengan Praktis & Terarah
                         </h2>
                         <p class="section__desc text-white pb-4">
                             NAC Tax Center adalah platform pembelajaran pajak untuk semua level.
