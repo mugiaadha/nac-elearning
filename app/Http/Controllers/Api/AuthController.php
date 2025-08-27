@@ -13,6 +13,43 @@ use Exception;
 class AuthController extends BaseController
 {
     /**
+     * Register a new user
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendError('Data tidak valid', $validator->errors(), 422);
+            }
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            $token = $user->createToken('api-token')->plainTextToken;
+
+            return $this->sendResponse([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user
+            ], 'Registrasi berhasil', 201);
+        } catch (Exception $e) {
+            return $this->handleException($e, 'Register process');
+        }
+    }
+    
+    /**
      * Login with token (Sanctum)
      *
      * @param \Illuminate\Http\Request $request

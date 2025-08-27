@@ -24,6 +24,7 @@ Route::prefix('site-settings')->group(function () {
 });
 
 // Authentication Routes
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/session-login', [AuthController::class, 'sessionLogin']);
 
