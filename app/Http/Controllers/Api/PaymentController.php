@@ -23,21 +23,17 @@ class PaymentController extends BaseController
             return $this->sendError('Data tidak valid', $validator->errors(), 422);
         }
 
-        try {
-            $user = $request->user();
-            $file = $request->file('bukti');
-            $path = $file->store('payment_proofs', 'public');
+        $user = $request->user();
+        $file = $request->file('bukti');
+        $path = $file->store('payment_proofs', 'public');
 
-            // Simpan path bukti pembayaran ke user atau tabel lain sesuai kebutuhan
-            $user->payment_proof = $path;
-            $user->status = 'admin-verification';
-            $user->save();
+        // Simpan path bukti pembayaran ke user atau tabel lain sesuai kebutuhan
+        $user->payment_proof = $path;
+        $user->status = 'admin-verification';
+        $user->save();
 
-            return $this->sendResponse([
-                'payment_proof' => $path
-            ], 'Bukti pembayaran berhasil diupload');
-        } catch (Exception $e) {
-            return $this->handleException($e, 'Upload payment proof');
-        }
+        return $this->sendResponse([
+            'payment_proof' => $path
+        ], 'Bukti pembayaran berhasil diupload');
     }
 }
