@@ -178,8 +178,9 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
     // Admin All user and Instructor All Route 
     Route::controller(ActiveUserController::class)->group(function () {
-        Route::get('/all/user', 'AllUser')->name('all.user');
-        Route::get('/all/instructor', 'AllInstructor')->name('all.instructor');
+    Route::get('/all/user', 'AllUser')->name('all.user');
+    Route::get('/all/instructor', 'AllInstructor')->name('all.instructor');
+    Route::post('/admin/user/approve/{id}', 'approve')->name('admin.user.approve');
     });
 
     // Blog Category All Route 
