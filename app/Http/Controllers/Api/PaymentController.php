@@ -29,7 +29,7 @@ class PaymentController extends BaseController
 
         // Simpan path bukti pembayaran ke user atau tabel lain sesuai kebutuhan
         $user->payment_proof = $path;
-        $user->status = 'admin-verification';
+        $user->status = 'admin-verif';
         $user->save();
 
         return $this->sendResponse([

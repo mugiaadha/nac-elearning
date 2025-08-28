@@ -25,6 +25,7 @@ return new class extends Migration
             $table->enum('status', [
                 'email-verif',
                 'payment-verif',
+                'admin-verif',
                 'active',
                 'inactive'
             ])->default('inactive');

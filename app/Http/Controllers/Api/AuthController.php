@@ -31,7 +31,7 @@ class AuthController extends BaseController
             return $this->sendError('OTP salah atau kadaluarsa', [], 422);
         }
         $user->email_verified_at = now();
-        $user->status = 'payment-verification';
+        $user->status = 'payment-verif';
         $user->otp = null;
         $user->otp_expired_at = null;
         $user->save();
