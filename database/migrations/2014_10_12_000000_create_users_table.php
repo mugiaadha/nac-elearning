@@ -23,8 +23,8 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->enum('role', ['admin', 'instructor', 'user'])->default('user');
             $table->enum('status', [
-                'email-verification',
-                'payment-verification',
+                'email-verif',
+                'payment-verif',
                 'active',
                 'inactive'
             ])->default('inactive');
