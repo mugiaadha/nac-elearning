@@ -24,9 +24,7 @@ return new class extends Migration
             $table->enum('role', ['admin', 'instructor', 'user'])->default('user');
             $table->enum('status', [
                 'email-verification',
-                'email-verified',
                 'payment-verification',
-                'payment-verified',
                 'active',
                 'inactive'
             ])->default('inactive');
