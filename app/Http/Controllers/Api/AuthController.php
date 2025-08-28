@@ -24,6 +24,7 @@ class AuthController extends BaseController
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
+                'phone' => 'required|string|max:255|unique:users',
                 'password' => 'required|string|min:6|confirmed',
             ]);
 
@@ -34,6 +35,7 @@ class AuthController extends BaseController
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'phone' => $request->phone,
                 'password' => Hash::make($request->password),
             ]);
 
@@ -48,7 +50,7 @@ class AuthController extends BaseController
             return $this->handleException($e, 'Register process');
         }
     }
-    
+
     /**
      * Login with token (Sanctum)
      *
@@ -83,7 +85,6 @@ class AuthController extends BaseController
                 'token_type' => 'Bearer',
                 'user' => $user
             ], 'Login berhasil');
-
         } catch (Exception $e) {
             return $this->handleException($e, 'Login process');
         }
@@ -109,7 +110,7 @@ class AuthController extends BaseController
             }
 
             $credentials = $request->only('email', 'password');
-            
+
             if (Auth::attempt($credentials)) {
                 $user = Auth::user();
                 return $this->sendResponse([
@@ -118,7 +119,6 @@ class AuthController extends BaseController
             }
 
             return $this->sendError('Email atau password salah', [], 401);
-
         } catch (Exception $e) {
             return $this->handleException($e, 'Session login process');
         }
@@ -152,7 +152,7 @@ class AuthController extends BaseController
     {
         try {
             $request->user()->currentAccessToken()->delete();
-            
+
             return $this->sendResponse(
                 [],
                 'Logout berhasil'
@@ -174,7 +174,7 @@ class AuthController extends BaseController
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
-            
+
             return $this->sendResponse(
                 [],
                 'Logout berhasil'
