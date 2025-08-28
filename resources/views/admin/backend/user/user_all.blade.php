@@ -55,11 +55,11 @@
                             </td>
                             <td class="text-center">
                                 @if($item->payment_proof)
-                                    <a href="{{ asset('storage/' . $item->payment_proof) }}" target="_blank">
-                                        <i class="bx bx-file" style="font-size: 1.5em;"></i>
-                                    </a>
+                                <a href="{{ asset('storage/' . $item->payment_proof) }}" target="_blank">
+                                    <i class="bx bx-file" style="font-size: 1.5em;"></i>
+                                </a>
                                 @else
-                                    -
+                                -
                                 @endif
                             </td>
                             <td>
