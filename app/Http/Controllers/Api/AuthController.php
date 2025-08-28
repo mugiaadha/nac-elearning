@@ -74,7 +74,7 @@ class AuthController extends BaseController
             ]);
 
             // Kirim email OTP
-            Mail::to($user->email)->send(new OtpMail($otp));
+            // Mail::to($user->email)->send(new OtpMail($otp));
 
             $token = $user->createToken('api-token')->plainTextToken;
 
