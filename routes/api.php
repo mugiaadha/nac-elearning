@@ -1,9 +1,10 @@
+use App\Http\Controllers\Api\PaymentController;
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SiteSettingController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +28,12 @@ Route::prefix('site-settings')->group(function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/session-login', [AuthController::class, 'sessionLogin']);
-Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
+    // Upload bukti pembayaran
+    Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+    Route::post('/upload-payment-proof', [PaymentController::class, 'uploadProof']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });

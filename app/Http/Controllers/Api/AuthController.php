@@ -24,14 +24,10 @@ class AuthController extends BaseController
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
             'otp' => 'required',
         ]);
-        $user = User::where('email', $request->email)
-            ->where('otp', $request->otp)
-            ->where('otp_expired_at', '>', now())
-            ->first();
-        if (!$user) {
+        $user = $request->user();
+        if (!$user || $user->otp !== $request->otp || !$user->otp_expired_at || $user->otp_expired_at < now()) {
             return $this->sendError('OTP salah atau kadaluarsa', [], 422);
         }
         $user->email_verified_at = now();
