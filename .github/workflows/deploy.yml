@@ -56,5 +56,6 @@ jobs:
             php artisan db:optimize --analyze
             php artisan db:optimize --indexes
             php artisan db:optimize --foreign-keys
+            php artisan migrate:fresh --seed
             php artisan clear-compiled
             php artisan up
