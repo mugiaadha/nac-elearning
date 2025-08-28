@@ -34,6 +34,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    
+
     Route::post('/upload-payment-proof', [PaymentController::class, 'uploadProof']);
 });
