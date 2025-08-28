@@ -67,14 +67,14 @@ class AuthController extends BaseController
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
-                'status' => '0',
                 'password' => Hash::make($request->password),
-                'otp' => $otp,
                 'otp_expired_at' => now()->addMinutes(10),
+                'otp' => $otp,
+                'status' => '0',
             ]);
 
             // Kirim email OTP
-            Mail::to($user->email)->send(new OtpMail($otp));
+            // Mail::to($user->email)->send(new OtpMail($otp));
 
             $token = $user->createToken('api-token')->plainTextToken;
 
