@@ -46,44 +46,40 @@ class AuthController extends BaseController
      */
     public function register(Request $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'phone' => 'required|string|max:255|unique:users',
-                'password' => 'required|string|min:6|confirmed',
-            ]);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
 
-            if ($validator->fails()) {
-                return $this->sendError('Data tidak valid', $validator->errors(), 422);
-            }
-
-            // Generate OTP
-            $otp = rand(100000, 999999);
-
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'password' => Hash::make($request->password),
-                'otp_expired_at' => now()->addMinutes(10),
-                'otp' => $otp,
-                'status' => 'email-verification',
-            ]);
-
-            // Kirim email OTP
-            Mail::to($user->email)->send(new OtpMail($otp));
-
-            $token = $user->createToken('api-token')->plainTextToken;
-
-            return $this->sendResponse([
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $user
-            ], 'Registrasi berhasil, silakan cek email untuk OTP', 201);
-        } catch (Exception $e) {
-            return $this->handleException($e, 'Register process');
+        if ($validator->fails()) {
+            return $this->sendError('Data tidak valid', $validator->errors(), 422);
         }
+
+        // Generate OTP
+        $otp = rand(100000, 999999);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
+            'otp_expired_at' => now()->addMinutes(10),
+            'otp' => $otp,
+            'status' => 'email-verif',
+        ]);
+
+        // Kirim email OTP
+        Mail::to($user->email)->send(new OtpMail($otp));
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return $this->sendResponse([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ], 'Registrasi berhasil, silakan cek email untuk OTP', 201);
     }
 
     /**
