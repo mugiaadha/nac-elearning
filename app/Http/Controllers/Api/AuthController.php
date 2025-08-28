@@ -35,7 +35,7 @@ class AuthController extends BaseController
             return $this->sendError('OTP salah atau kadaluarsa', [], 422);
         }
         $user->email_verified_at = now();
-        $user->status = '1';
+        $user->status = 'verified';
         $user->otp = null;
         $user->otp_expired_at = null;
         $user->save();
@@ -71,7 +71,7 @@ class AuthController extends BaseController
                 'password' => Hash::make($request->password),
                 'otp_expired_at' => now()->addMinutes(10),
                 'otp' => $otp,
-                'status' => '0',
+                'status' => 'unverified',
             ]);
 
             // Kirim email OTP
