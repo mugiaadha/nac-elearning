@@ -41,6 +41,7 @@ class AuthController extends BaseController
         $user->save();
         return $this->sendResponse([], 'Verifikasi email berhasil');
     }
+
     /**
      * Register a new user
      *
@@ -75,7 +76,7 @@ class AuthController extends BaseController
             ]);
 
             // Kirim email OTP
-            // Mail::to($user->email)->send(new OtpMail($otp));
+            Mail::to($user->email)->send(new OtpMail($otp));
 
             $token = $user->createToken('api-token')->plainTextToken;
 
