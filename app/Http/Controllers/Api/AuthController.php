@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Mail\OtpMail;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\BaseController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,8 +12,34 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 
+
 class AuthController extends BaseController
 {
+    /**
+     * Verifikasi OTP Email
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required',
+        ]);
+        $user = User::where('email', $request->email)
+            ->where('otp', $request->otp)
+            ->where('otp_expired_at', '>', now())
+            ->first();
+        if (!$user) {
+            return $this->sendError('OTP salah atau kadaluarsa', [], 422);
+        }
+        $user->email_verified_at = now();
+        $user->otp = null;
+        $user->otp_expired_at = null;
+        $user->save();
+        return $this->sendResponse([], 'Verifikasi email berhasil');
+    }
     /**
      * Register a new user
      *
@@ -32,13 +60,21 @@ class AuthController extends BaseController
                 return $this->sendError('Data tidak valid', $validator->errors(), 422);
             }
 
+            // Generate OTP
+            $otp = rand(100000, 999999);
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'status' => '0',
                 'password' => Hash::make($request->password),
+                'otp' => $otp,
+                'otp_expired_at' => now()->addMinutes(10),
             ]);
+
+            // Kirim email OTP
+            Mail::to($user->email)->send(new OtpMail($otp));
 
             $token = $user->createToken('api-token')->plainTextToken;
 
@@ -46,7 +82,7 @@ class AuthController extends BaseController
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user
-            ], 'Registrasi berhasil', 201);
+            ], 'Registrasi berhasil, silakan cek email untuk OTP', 201);
         } catch (Exception $e) {
             return $this->handleException($e, 'Register process');
         }

@@ -27,6 +27,7 @@ Route::prefix('site-settings')->group(function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/session-login', [AuthController::class, 'sessionLogin']);
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
