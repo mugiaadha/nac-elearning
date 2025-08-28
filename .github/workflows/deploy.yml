@@ -42,8 +42,10 @@ jobs:
           TARGET: /var/www/laravel-app
           SOURCE: .
           EXCLUDE: .env, storage, .git
-          ARGS: -avz --delete --chown=www-data:www-data
+          ARGS: -avz --delete
           SCRIPT_AFTER: |
+            sudo chown -R www-data:www-data /var/www/laravel-app
+            sudo chmod -R 755 /var/www/laravel-app
             cd /var/www/laravel-app
             php artisan down
             php artisan migrate --force
