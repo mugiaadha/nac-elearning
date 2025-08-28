@@ -32,7 +32,8 @@ Route::post('/session-login', [AuthController::class, 'sessionLogin']);
 Route::middleware('auth:sanctum')->group(function () {
     // Upload bukti pembayaran
     Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
-    Route::post('/upload-payment-proof', [PaymentController::class, 'uploadProof']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    
+    Route::post('/upload-payment-proof', [PaymentController::class, 'uploadProof']);
 });
