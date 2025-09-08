@@ -8,8 +8,36 @@ use Exception;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactMail;
+
 class SiteSettingController extends BaseController
 {
+    /**
+     * Kirim email dari user ke email NAC yang disetting di SiteSettings
+     */
+    public function sendContactEmail(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|max:100',
+            'message' => 'required|string|max:1000',
+            'subject' => 'required|string|max:1000',
+        ]);
+
+        $setting = SiteSetting::first();
+        $toEmail = $setting?->email ?? config('mail.from.address');
+
+        Mail::to($toEmail)->send(new ContactMail(
+            $request->name,
+            $request->email,
+            $request->message,
+            $request->subject
+        ));
+
+        return $this->sendResponse(null, 'Pesan berhasil dikirim ke NAC Tax Center.');
+    }
     /**
      * Get site settings data
      *
