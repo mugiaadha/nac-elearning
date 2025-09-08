@@ -5,10 +5,11 @@
 BaseController sudah dilengkapi dengan beberapa method untuk caching yang praktis dan mudah digunakan:
 
 ### 1. `cacheOrExecute()` - Simple Cache with Auto Response
+
 ```php
 // Paling praktis - auto return response dengan try catch
 return $this->cacheOrExecute(
-    'cache_key', 
+    'cache_key',
     function() {
         return Model::all(); // Your data logic
     },
@@ -19,6 +20,7 @@ return $this->cacheOrExecute(
 ```
 
 ### 2. `cacheResponse()` - Basic Cache with Try Catch
+
 ```php
 $result = $this->cacheResponse(
     'cache_key',
@@ -32,6 +34,7 @@ return $this->sendResponse($result, 'Success message');
 ```
 
 ### 3. `cacheWithTags()` - Cache with Tags (Redis/Memcached)
+
 ```php
 $result = $this->cacheWithTags(
     'cache_key',
@@ -47,18 +50,21 @@ $result = $this->cacheWithTags(
 ### 4. Helper Methods
 
 #### Generate Cache Key
+
 ```php
 $cacheKey = $this->generateCacheKey('prefix', ['param' => 'value']);
 // Result: prefix:/api/endpoint:GET:hash_of_query:hash_of_params
 ```
 
 #### Clear Cache
+
 ```php
 $this->clearCache('cache_key'); // Single key
 $this->clearCacheByTags(['tag1', 'tag2']); // By tags
 ```
 
 #### Cache Debug Info
+
 ```php
 $info = $this->getCacheInfo('cache_key');
 // Returns: key, exists, has_data, type, size
@@ -67,11 +73,12 @@ $info = $this->getCacheInfo('cache_key');
 ## Implementation Examples
 
 ### Example 1: Simple Endpoint (Most Common)
+
 ```php
 public function getAllCourses()
 {
     $cacheKey = $this->generateCacheKey('courses_all');
-    
+
     return $this->cacheOrExecute(
         $cacheKey,
         function () {
@@ -87,13 +94,14 @@ public function getAllCourses()
 ```
 
 ### Example 2: With Parameters
+
 ```php
 public function getCoursesByCategory($categoryId)
 {
     $cacheKey = $this->generateCacheKey('courses_by_category', [
         'category_id' => $categoryId
     ]);
-    
+
     return $this->cacheOrExecute(
         $cacheKey,
         function () use ($categoryId) {
@@ -109,11 +117,12 @@ public function getCoursesByCategory($categoryId)
 ```
 
 ### Example 3: With Tags for Selective Clearing
+
 ```php
 public function getUserProfile($userId)
 {
     $cacheKey = $this->generateCacheKey('user_profile', ['user_id' => $userId]);
-    
+
     return $this->cacheWithTags(
         $cacheKey,
         ['users', 'profiles', "user_{$userId}"],
@@ -130,21 +139,22 @@ public function getUserProfile($userId)
 public function updateUserProfile($userId, $data)
 {
     // Update user logic here...
-    
+
     // Clear related caches
     $this->clearCacheByTags(["user_{$userId}", 'profiles']);
-    
+
     return $this->sendResponse($user, 'Profile updated successfully');
 }
 ```
 
 ### Example 4: Without Auto Response (More Control)
+
 ```php
 public function getStatistics()
 {
     try {
         $cacheKey = $this->generateCacheKey('dashboard_stats');
-        
+
         $stats = $this->cacheResponse(
             $cacheKey,
             function () {
@@ -163,7 +173,7 @@ public function getStatistics()
         $stats['formatted_revenue'] = 'Rp ' . number_format($stats['revenue']);
 
         return $this->sendResponse($stats, 'Statistik berhasil diambil');
-        
+
     } catch (Exception $e) {
         return $this->handleException($e, 'Getting dashboard statistics');
     }
@@ -175,22 +185,23 @@ public function getStatistics()
 ### Recommended Cache Drivers
 
 1. **Redis** (Recommended for production)
-   - Supports tags
-   - High performance
-   - Persistent storage
+    - Supports tags
+    - High performance
+    - Persistent storage
 
-2. **Memcached** 
-   - Supports tags
-   - Good performance
-   - Memory-only
+2. **Memcached**
+    - Supports tags
+    - Good performance
+    - Memory-only
 
 3. **File/Database** (Development only)
-   - No tags support
-   - Lower performance
+    - No tags support
+    - Lower performance
 
 ### Environment Configuration
 
 Add to `.env`:
+
 ```env
 CACHE_DRIVER=redis
 REDIS_HOST=127.0.0.1
@@ -201,6 +212,7 @@ REDIS_PORT=6379
 ## Best Practices
 
 ### 1. Cache TTL Guidelines
+
 - **Static data** (site settings): 24 hours (1440 minutes)
 - **Semi-static data** (categories, courses): 1-6 hours (60-360 minutes)
 - **User data** (profiles, preferences): 1-2 hours (60-120 minutes)
@@ -208,6 +220,7 @@ REDIS_PORT=6379
 - **Frequently changing** (notifications): No cache or 1-5 minutes
 
 ### 2. Cache Key Naming
+
 ```php
 // Good
 'courses_all'
@@ -222,6 +235,7 @@ REDIS_PORT=6379
 ```
 
 ### 3. Use Tags for Related Data
+
 ```php
 // Group related caches
 ['users', 'profiles', 'user_123']
@@ -230,26 +244,29 @@ REDIS_PORT=6379
 ```
 
 ### 4. Clear Cache Strategically
+
 ```php
 // When data changes
 public function updateCourse($id, $data)
 {
     $course = Course::findOrFail($id);
     $course->update($data);
-    
+
     // Clear related caches
     $this->clearCacheByTags(['courses', 'categories']);
-    
+
     return $this->sendResponse($course, 'Course updated');
 }
 ```
 
 ### 5. Error Handling
+
 Cache methods sudah include try-catch dan logging otomatis. Jika cache fail, akan return error response dengan logging ke Slack.
 
 ## Migration from Non-Cached Controller
 
 ### Before:
+
 ```php
 public function index()
 {
@@ -263,11 +280,12 @@ public function index()
 ```
 
 ### After:
+
 ```php
 public function index()
 {
     $cacheKey = $this->generateCacheKey('model_all');
-    
+
     return $this->cacheOrExecute(
         $cacheKey,
         function () {

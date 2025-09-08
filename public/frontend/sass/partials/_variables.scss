@@ -3,7 +3,7 @@ $theme-color-2: #4898c8;
 $theme-color-3: #ef6767;
 $theme-color-4: #7f8897;
 
-$theme-font: 'Inter', sans-serif;
+$theme-font: "Inter", sans-serif;
 
 /*==== font size ====*/
 $font-size-90: 90px;
@@ -49,26 +49,26 @@ $black-3: #292929;
 $black-4: #3a3a3a;
 $color-gray: #f7f7ff;
 $color-gray-2: #eeeeee;
-$color-1: #7E3CF9;
-$color-2: #F68A03;
-$color-3: #358FF7;
-$color-4: #38BB0C;
-$color-5: #DD493D;
-$color-6: #3E5B99;
-$color-7: #3AAAE1;
-$color-8: #FF0000;
+$color-1: #7e3cf9;
+$color-2: #f68a03;
+$color-3: #358ff7;
+$color-4: #38bb0c;
+$color-5: #dd493d;
+$color-6: #3e5b99;
+$color-7: #3aaae1;
+$color-8: #ff0000;
 $color-9: #28a745;
 $color-10: #f1e77f;
 
-$laptop_l: '(max-width: 1440px)';
-$laptop_m: '(max-width: 1366px)';
-$laptop_m_two: '(max-width: 1280px)';
-$laptop_m_three: '(max-width: 1199px)';
-$laptop_m_four: '(max-width: 1024px)';
-$tab_device: 'only screen and (min-width: 768px) and (max-width: 991px)';
-$large_mobile: 'only screen and (min-width: 480px) and (max-width: 767px)';
-$small_mobile: 'only screen and (min-width: 320px) and (max-width: 479px)';
+$laptop_l: "(max-width: 1440px)";
+$laptop_m: "(max-width: 1366px)";
+$laptop_m_two: "(max-width: 1280px)";
+$laptop_m_three: "(max-width: 1199px)";
+$laptop_m_four: "(max-width: 1024px)";
+$tab_device: "only screen and (min-width: 768px) and (max-width: 991px)";
+$large_mobile: "only screen and (min-width: 480px) and (max-width: 767px)";
+$small_mobile: "only screen and (min-width: 320px) and (max-width: 479px)";
 
-$device-480px: '(max-width: 480px)';
-$device-375px: '(max-width: 375px)';
-$device-320px: '(max-width: 320px)';
+$device-480px: "(max-width: 480px)";
+$device-375px: "(max-width: 375px)";
+$device-320px: "(max-width: 320px)";
