@@ -9,8 +9,10 @@
                         <input type="text" name="course_goals[]" id="goals" class="form-control" placeholder="Goals  ">
                     </div>
                     <div class="form-group col-md-6" style="padding-top: 20px">
-                        <span class="btn btn-success btn-sm addeventmore"><span class="fa fa-plus-circle">Add</span></span>
-                        <span class="btn btn-danger btn-sm removeeventmore"><span class="fa fa-minus-circle">Remove</span></span>
+                        <span class="btn btn-success btn-sm addeventmore"><span
+                                class="fa fa-plus-circle">Add</span></span>
+                        <span class="btn btn-danger btn-sm removeeventmore"><span
+                                class="fa fa-minus-circle">Remove</span></span>
                     </div>
                 </div>
             </div>

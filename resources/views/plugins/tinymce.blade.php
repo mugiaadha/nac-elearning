@@ -1,5 +1,6 @@
 <!-- Place the first <script> tag in your HTML's <head> -->
-<script src="https://cdn.tiny.cloud/1/vwjzqtca2m29ckujxypd6t88vv9wzuv8wdzpp2cjehwrv367/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+<script src="https://cdn.tiny.cloud/1/vwjzqtca2m29ckujxypd6t88vv9wzuv8wdzpp2cjehwrv367/tinymce/8/tinymce.min.js"
+    referrerpolicy="origin" crossorigin="anonymous"></script>
 
 <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
 <script>

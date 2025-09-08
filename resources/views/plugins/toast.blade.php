@@ -1,14 +1,9 @@
 <!-- notification -->
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
-<div
-    id="flash"
-    data-message="{{ Session::get('message') }}"
-    data-type="{{ Session::get('alert-type', 'info') }}">
+<div id="flash" data-message="{{ Session::get('message') }}" data-type="{{ Session::get('alert-type', 'info') }}">
 </div>
 
-<script
-    type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const flash = document.getElementById("flash");

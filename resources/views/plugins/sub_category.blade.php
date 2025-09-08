@@ -11,7 +11,9 @@
                         $('select[name="course_sub_category_id"]').html('');
                         var d = $('select[name="course_sub_category_id"]').empty();
                         $.each(data, function(key, value) {
-                            $('select[name="course_sub_category_id"]').append('<option value="' + value.id + '">' + value.sub_category_name + '</option>');
+                            $('select[name="course_sub_category_id"]').append(
+                                '<option value="' + value.id + '">' + value
+                                .sub_category_name + '</option>');
                         });
                     },
                 });
