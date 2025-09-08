@@ -19,7 +19,6 @@ class SiteSettingController extends BaseController
      */
     public function sendContactEmail(Request $request)
     {
-        return 'test';
         $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|max:100',
