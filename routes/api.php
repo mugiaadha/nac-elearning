@@ -30,7 +30,7 @@ Route::post('/session-login', [AuthController::class, 'sessionLogin']);
 
 
 // Contact Form Endpoint
-Route::post('/contact', [SiteSettingController::class, 'sendContactEmail']);
+Route::post('/send-feedback', [SiteSettingController::class, 'sendContactEmail']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
