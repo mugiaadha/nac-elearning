@@ -28,9 +28,10 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/session-login', [AuthController::class, 'sessionLogin']);
 
-
-// Send Feedback Form Endpoint
-Route::post('/send-feedback', [SiteSettingController::class, 'sendContactEmail']);
+Route::middleware('recaptcha')->group(function () {
+    // Send Feedback Form Endpoint
+    Route::post('/send-feedback', [SiteSettingController::class, 'sendContactEmail']);
+});
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
