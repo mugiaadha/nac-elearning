@@ -17,7 +17,7 @@ class UserTableSeeder extends Seeder
             [
                 'logo' => 'storage/logo/1837792627993646.png',
                 'phone' => '085159080404',
-                'email' => 'nac@gmail.com',
+                'email' => 'mugiaadha@gmail.com',
                 'address' => 'Jl. Pajak No. 123, Jakarta',
                 'facebook' => 'https://facebook.com/nactaxcenter',
                 'twitter' => 'https://twitter.com/nactaxcenter',
