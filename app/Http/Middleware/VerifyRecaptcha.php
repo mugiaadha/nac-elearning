@@ -11,11 +11,11 @@ class VerifyRecaptcha
     public function handle(Request $request, Closure $next)
     {
         // pastikan token ada
-        if (!$request->has('g-recaptcha-response')) {
+        if (!$request->has('captcha')) {
             return response()->json(['message' => 'Captcha wajib diisi.'], 422);
         }
 
-        $captchaToken = $request->input('g-recaptcha-response');
+        $captchaToken = $request->input('captcha');
 
         // kirim ke Google
         $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
