@@ -29,7 +29,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/session-login', [AuthController::class, 'sessionLogin']);
 
 
-// Contact Form Endpoint
+// Send Feedback Form Endpoint
 Route::post('/send-feedback', [SiteSettingController::class, 'sendContactEmail']);
 
 // Protected Routes

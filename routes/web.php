@@ -178,9 +178,9 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
     // Admin All user and Instructor All Route 
     Route::controller(ActiveUserController::class)->group(function () {
-    Route::get('/all/user', 'AllUser')->name('all.user');
-    Route::get('/all/instructor', 'AllInstructor')->name('all.instructor');
-    Route::post('/admin/user/approve/{id}', 'approve')->name('admin.user.approve');
+        Route::get('/all/user', 'AllUser')->name('all.user');
+        Route::get('/all/instructor', 'AllInstructor')->name('all.instructor');
+        Route::post('/admin/user/approve/{id}', 'approve')->name('admin.user.approve');
     });
 
     // Blog Category All Route 
@@ -387,4 +387,13 @@ Route::get('/user-all', [ChatController::class, 'GetAllUsers']);
 Route::get('/user-message/{id}', [ChatController::class, 'UserMsgById']);
 Route::get('/instructor/live/chat', [ChatController::class, 'LiveChat'])->name('instructor.live.chat');
 
+// Preview email template dinamis
+Route::get('/preview-email/{template}', function ($template) {
+    $data = request()->all();
+    $view = 'emails.' . $template;
+    if (!view()->exists($view)) {
+        abort(404, 'Template email tidak ditemukan');
+    }
+    return view($view, $data);
+});
 ///// End Route Accessable for All 

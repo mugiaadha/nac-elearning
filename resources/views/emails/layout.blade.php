@@ -8,7 +8,7 @@
 </head>
 
 <body style="margin:0;padding:0;background:linear-gradient(135deg,#e0e7ff 0%,#f8fafc 100%);font-family:'Inter',Arial,sans-serif;min-height:100vh;">
-    <div style="max-width:480px;margin:48px auto 24px auto;padding:0 12px;">
+    <div style="max-width:480px;margin:100px auto 24px auto;padding:0 12px;">
         <div style="background:#fff;border-radius:18px;box-shadow:0 6px 32px rgba(30,64,175,0.10),0 1.5px 6px rgba(30,64,175,0.07);padding:36px 28px 28px 28px;">
             <div style="text-align:center;margin-bottom:28px;">
                 <img src="https://backend.nacademy.my.id/storage/logo/1837792627993646.png" alt="NAC Tax Center" style="height:54px;margin-bottom:10px;">
