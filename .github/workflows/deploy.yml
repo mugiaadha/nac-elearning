@@ -44,20 +44,30 @@ jobs:
           EXCLUDE: .env, storage, .git
           ARGS: -avz --delete
           SCRIPT_AFTER: |
-            sudo chown -R www-data:www-data /var/www/laravel-app
-            sudo chmod -R 755 /var/www/laravel-app
             cd /var/www/laravel-app
-            php artisan down
+
+            # Set kepemilikan ke www-data (user web server)
+            sudo chown -R www-data:www-data /var/www/laravel-app
+
+            # Atur permission file & folder
+            sudo find /var/www/laravel-app -type f -exec chmod 644 {} \;
+            sudo find /var/www/laravel-app -type d -exec chmod 755 {} \;
+
+            # Kasih akses tulis untuk storage & bootstrap/cache
+            sudo chgrp -R www-data storage bootstrap/cache
+            sudo chmod -R ug+rwx storage bootstrap/cache
+
+            # Maintenance mode ON
+            php artisan down || true
+
+            # Migrasi & optimize
             php artisan migrate --force
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
             php artisan storage:link
+            php artisan optimize:clear
             php artisan optimize
-            php artisan db:optimize --check
-            php artisan db:optimize --analyze
-            php artisan db:optimize --indexes
-            php artisan db:optimize --foreign-keys
-            php artisan migrate:fresh --seed
-            php artisan clear-compiled
+
+            # Maintenance mode OFF
             php artisan up
