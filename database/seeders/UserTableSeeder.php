@@ -18,7 +18,7 @@ class UserTableSeeder extends Seeder
                 'logo' => 'storage/logo/1837792627993646.png',
                 'phone' => '085159080404',
                 'email' => 'mugiaadha@gmail.com',
-                'address' => 'Jl. Pajak No. 123, Jakarta',
+                'address' => 'Jl. Pajak No. 123, Jakartaa',
                 'facebook' => 'https://facebook.com/nactaxcenter',
                 'twitter' => 'https://twitter.com/nactaxcenter',
                 'copyright' => '© 2025 NAC Tax Center. All rights reserved.',
