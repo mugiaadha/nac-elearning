@@ -19,8 +19,8 @@ use App\Http\Controllers\Api\PaymentController;
 // Site Settings API Routes
 Route::prefix('site-settings')->group(function () {
     Route::get('/', [SiteSettingController::class, 'index']);
-    Route::delete('/clear-all-cache', [SiteSettingController::class, 'clearAllCache']);
-    Route::delete('/clear-cache', [SiteSettingController::class, 'clearSiteSettingsCache']);
+    Route::get('/clear', [SiteSettingController::class, 'clearAllCache']);
+    // Route::get('/clear-cache', [SiteSettingController::class, 'clearSiteSettingsCache']);
 });
 
 // Authentication Routes
