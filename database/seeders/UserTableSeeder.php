@@ -15,7 +15,7 @@ class UserTableSeeder extends Seeder
     {
         DB::table('site_settings')->insert([
             [
-                'logo' => 'storage/logo/1837792627993646.png',
+                'logo' => 'storage/logo/1846926793164867.webp',
                 'phone' => '085159080404',
                 'email' => 'mugiaadha@gmail.com',
                 'address' => 'Jl. Pajak No. 123, Jakartaa',
